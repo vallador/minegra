@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FlowerInicioProps {
   onComplete: () => void
@@ -9,6 +9,15 @@ interface FlowerInicioProps {
 
 export function FlowerInicio({ onComplete }: FlowerInicioProps) {
   const [phase, setPhase] = useState(0)
+  const [showButton, setShowButton] = useState(false)
+
+  useEffect(() => {
+    if (phase === 2) {
+      // Silencio de 2 segundos antes de mostrar el botón
+      const timer = setTimeout(() => setShowButton(true), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [phase])
 
   return (
     <div className="p-6 text-center">
@@ -214,38 +223,37 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
                   </motion.div>
                 </div>
               </div>
-              {/* Estación de policía simplificada */}
-              <div 
-                className="absolute bottom-2 right-2 w-12 h-8 rounded"
-                style={{ background: '#4a5568' }}
-              >
-                <div className="w-2 h-2 bg-blue-400 rounded-full absolute top-1 left-1" />
-              </div>
             </div>
 
             <p className="text-gray-500 text-sm italic">
               Caminando hacia la estación.
             </p>
 
+            {/* Silencio antes de la frase final */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 1 }}
               className="pt-4"
             >
               <p className="text-pink-600 font-medium" style={{ fontFamily: 'Georgia, serif' }}>
-                Nuestra rutina favorita.
+                Elegí el hábito de estar.
               </p>
             </motion.div>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onComplete}
-              className="mt-4 text-pink-400 text-sm"
-            >
-              ✓
-            </motion.button>
+            {/* Botón después del silencio */}
+            {showButton && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={onComplete}
+                className="text-pink-400 text-sm"
+              >
+                ✓
+              </motion.button>
+            )}
           </motion.div>
         )}
       </div>

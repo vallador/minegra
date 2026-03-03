@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FlowerLomaProps {
   onComplete: () => void
@@ -11,6 +11,15 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
   const [handExtended, setHandExtended] = useState(false)
   const [reachedTop, setReachedTop] = useState(false)
   const [flowersAdded, setFlowersAdded] = useState(false)
+  const [showButton, setShowButton] = useState(false)
+
+  useEffect(() => {
+    if (flowersAdded) {
+      // Silencio de 2 segundos antes de mostrar el botón
+      const timer = setTimeout(() => setShowButton(true), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [flowersAdded])
 
   return (
     <div className="p-6 text-center">
@@ -177,18 +186,29 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-4"
         >
-          <p className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}>
-            Hay montañas que solo se suben con la mano correcta.
-          </p>
-          
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={onComplete}
-            className="text-pink-400 text-sm"
+          {/* Silencio antes de la frase */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}
           >
-            ✓
-          </motion.button>
+            Te di mi mano cada vez que la necesitaste.
+          </motion.p>
+          
+          {/* Botón después del silencio */}
+          {showButton && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onComplete}
+              className="text-pink-400 text-sm"
+            >
+              ✓
+            </motion.button>
+          )}
         </motion.div>
       )}
     </div>

@@ -10,11 +10,13 @@ import { FlowerJuegos } from './flowers/FlowerJuegos'
 import { FlowerBasket } from './flowers/FlowerBasket'
 import { FlowerHogar } from './flowers/FlowerHogar'
 import { FlowerTu } from './flowers/FlowerTu'
+import { FlowerIncomplete } from './flowers/FlowerIncomplete'
 import { Trivia } from './Trivia'
 import { FinalLetter } from './FinalLetter'
+import { BlackScreen } from './BlackScreen'
 
 export function TulipBouquet() {
-  const { flowers, currentFlower, openFlower, showTrivia, showLetter } = useGiftStore()
+  const { flowers, currentFlower, openFlower, showTrivia, showLetter, showBlackScreen } = useGiftStore()
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
@@ -45,7 +47,7 @@ export function TulipBouquet() {
             className="text-2xl md:text-3xl font-light text-pink-600 tracking-wide"
             style={{ fontFamily: 'Georgia, serif' }}
           >
-            Para ti
+            Lo que quedó
           </h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -53,13 +55,13 @@ export function TulipBouquet() {
             transition={{ delay: 1.5, duration: 1 }}
             className="text-pink-400 mt-2 text-xs"
           >
-            Toca cada tulipán
+            En orden
           </motion.p>
         </motion.div>
 
         {/* Ramo de tulipanes */}
         <motion.div
-          className="relative w-72 h-72 md:w-80 md:h-80"
+          className="relative w-72 h-80 md:w-80 md:h-88"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
@@ -81,25 +83,26 @@ export function TulipBouquet() {
               id={flower.id}
               status={flower.status}
               index={index}
+              canOpen={useGiftStore.getState().canOpenFlower(flower.id)}
               onClick={() => openFlower(flower.id)}
             />
           ))}
         </motion.div>
 
-        {/* Contador de flores florecidas */}
+        {/* Indicador de progreso */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
           className="mt-8 text-center"
         >
-          <p className="text-pink-400 text-sm">
-            {flowers.filter(f => f.status === 'bloomed').length} de 7
+          <p className="text-pink-400 text-xs">
+            {flowers.filter(f => f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete').length} de 8
           </p>
         </motion.div>
       </div>
 
-      {/* Modal de flor abierta */}
+      {/* Modal de flor abierta - SIN botón de cerrar */}
       <AnimatePresence>
         {currentFlower && (
           <FlowerModal flowerId={currentFlower} />
@@ -113,7 +116,12 @@ export function TulipBouquet() {
 
       {/* Carta final */}
       <AnimatePresence>
-        {showLetter && <FinalLetter />}
+        {showLetter && !showBlackScreen && <FinalLetter />}
+      </AnimatePresence>
+
+      {/* Pantalla negra final */}
+      <AnimatePresence>
+        {showBlackScreen && <BlackScreen />}
       </AnimatePresence>
     </div>
   )
@@ -137,6 +145,7 @@ function FlowerModal({ flowerId }: { flowerId: number }) {
     5: <FlowerBasket onComplete={handleComplete} />,
     6: <FlowerHogar onComplete={handleComplete} />,
     7: <FlowerTu onComplete={handleComplete} />,
+    8: <FlowerIncomplete />,
   }
 
   return (
@@ -145,14 +154,9 @@ function FlowerModal({ flowerId }: { flowerId: number }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.85)' }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          const { closeFlower } = useGiftStore.getState()
-          closeFlower()
-        }
-      }}
+      style={{ background: 'rgba(0,0,0,0.9)' }}
     >
+      {/* SIN onClick para cerrar - solo puede avanzar con el botón interno */}
       <motion.div
         initial={{ scale: 0.8, y: 50, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}

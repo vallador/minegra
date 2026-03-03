@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FlowerLluviaProps {
   onComplete: () => void
@@ -9,6 +9,15 @@ interface FlowerLluviaProps {
 
 export function FlowerLluvia({ onComplete }: FlowerLluviaProps) {
   const [phase, setPhase] = useState(0)
+  const [showButton, setShowButton] = useState(false)
+
+  useEffect(() => {
+    if (phase === 2) {
+      // Silencio de 2 segundos antes de mostrar el botón
+      const timer = setTimeout(() => setShowButton(true), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [phase])
 
   return (
     <div className="p-6 text-center">
@@ -138,18 +147,29 @@ export function FlowerLluvia({ onComplete }: FlowerLluviaProps) {
               Subieron a las cuerdas del parque...
             </p>
             
-            <p className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}>
-              Para mí, ese fue el primero.
-            </p>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onComplete}
-              className="text-pink-400 text-sm"
+            {/* Silencio antes de la frase */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}
             >
-              ✓
-            </motion.button>
+              Yo lo recordé siempre. Tú decidiste cuándo.
+            </motion.p>
+
+            {/* Botón después del silencio */}
+            {showButton && (
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onComplete}
+                className="text-pink-400 text-sm"
+              >
+                ✓
+              </motion.button>
+            )}
           </motion.div>
         )}
       </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FlowerBasketProps {
   onComplete: () => void
@@ -12,6 +12,15 @@ export function FlowerBasket({ onComplete }: FlowerBasketProps) {
   const [ballPosition, setBallPosition] = useState({ x: 50, y: 80 })
   const [isAnimating, setIsAnimating] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
+  const [showButton, setShowButton] = useState(false)
+
+  useEffect(() => {
+    if (showMessage) {
+      // Silencio de 2 segundos antes de mostrar el botón
+      const timer = setTimeout(() => setShowButton(true), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [showMessage])
 
   const handleShoot = () => {
     if (isAnimating || score >= 3) return
@@ -143,18 +152,29 @@ export function FlowerBasket({ onComplete }: FlowerBasketProps) {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-4"
         >
-          <p className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}>
-            Me encantaba verte competir.
-          </p>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onComplete}
-            className="text-pink-400 text-sm"
+          {/* Silencio antes de la frase */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}
           >
-            ✓
-          </motion.button>
+            Te miraba ganar.
+          </motion.p>
+
+          {/* Botón después del silencio */}
+          {showButton && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onComplete}
+              className="text-pink-400 text-sm"
+            >
+              ✓
+            </motion.button>
+          )}
         </motion.div>
       )}
     </div>

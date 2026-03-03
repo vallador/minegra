@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FlowerJuegosProps {
   onComplete: () => void
@@ -9,6 +9,7 @@ interface FlowerJuegosProps {
 
 export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
   const [currentItem, setCurrentItem] = useState(0)
+  const [showButton, setShowButton] = useState(false)
 
   const items = [
     { emoji: '🧩', title: 'Tetris cama', desc: 'Armando figuras con el cuerpo' },
@@ -16,6 +17,14 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
     { emoji: '🐓', title: 'Gallo fino tap tap', desc: 'Los sonidos de mi papá' },
     { emoji: '📦', title: 'Caja sorpresa', desc: 'Siempre algo nuevo' },
   ]
+
+  useEffect(() => {
+    if (currentItem === items.length - 1) {
+      // Silencio de 2 segundos en el último item
+      const timer = setTimeout(() => setShowButton(true), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [currentItem, items.length])
 
   const handleNext = () => {
     if (currentItem < items.length - 1) {
@@ -35,7 +44,7 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
       >
         <span className="text-3xl">🎮</span>
         <h2 className="text-xl font-light text-pink-600 mt-2" style={{ fontFamily: 'Georgia, serif' }}>
-          Nuestro humor absurdo
+          Humor absurdo
         </h2>
         <div className="w-16 h-0.5 bg-pink-300 mx-auto mt-3" />
       </motion.div>
@@ -83,14 +92,30 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
           ))}
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleNext}
-          className="text-pink-400 text-sm"
-        >
-          {currentItem < items.length - 1 ? '→' : '✓'}
-        </motion.button>
+        {/* Botón después del silencio en el último */}
+        {currentItem < items.length - 1 ? (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleNext}
+            className="text-pink-400 text-sm"
+          >
+            →
+          </motion.button>
+        ) : (
+          showButton && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleNext}
+              className="text-pink-400 text-sm"
+            >
+              ✓
+            </motion.button>
+          )
+        )}
       </motion.div>
     </div>
   )

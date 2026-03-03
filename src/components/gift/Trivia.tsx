@@ -205,8 +205,8 @@ export function Trivia() {
                 }`}
               >
                 {selectedAnswer === questions[currentQuestion].correct
-                  ? '¡Correcto! 🎉'
-                  : '¡Ups! No era esa 😅'}
+                  ? 'Tú viviste los momentos. Yo los guardé.'
+                  : 'Yo lo recordaba. Tú también, en algún lado.'}
               </motion.div>
             )}
           </motion.div>

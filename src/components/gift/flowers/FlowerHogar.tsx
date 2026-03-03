@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FlowerHogarProps {
   onComplete: () => void
@@ -12,6 +12,7 @@ export function FlowerHogar({ onComplete }: FlowerHogarProps) {
   const [isCorrect, setIsCorrect] = useState(false)
   const [showError, setShowError] = useState(false)
   const [carouselIndex, setCarouselIndex] = useState(0)
+  const [showButton, setShowButton] = useState(false)
 
   const secretWord = 'HOGAR'
   const displayWord = '_ _ G _ R'
@@ -34,6 +35,14 @@ export function FlowerHogar({ onComplete }: FlowerHogarProps) {
     { emoji: '🎄', text: 'Árbol de navidad' },
     { emoji: '🌙', text: 'Madrugada' },
   ]
+
+  useEffect(() => {
+    if (isCorrect) {
+      // Silencio de 2 segundos después de mostrar la frase
+      const timer = setTimeout(() => setShowButton(true), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [isCorrect])
 
   return (
     <div className="p-6 text-center">
@@ -199,20 +208,25 @@ export function FlowerHogar({ onComplete }: FlowerHogarProps) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.5 }}
             >
               <p className="text-pink-600 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
-                Contigo, una casa podía aparecer en cualquier parte.
+                Yo era donde te sentías segura.
               </p>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={onComplete}
-                className="text-pink-400 text-sm"
-              >
-                ✓
-              </motion.button>
+              {/* Botón después del silencio */}
+              {showButton && (
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={onComplete}
+                  className="text-pink-400 text-sm"
+                >
+                  ✓
+                </motion.button>
+              )}
             </motion.div>
           </motion.div>
         )}

@@ -1,8 +1,22 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useGiftStore } from '@/store/useGiftStore'
+import { useEffect, useState } from 'react'
 
 export function FinalLetter() {
+  const { showBlackScreenFinal, witherAllFlowers } = useGiftStore()
+  const [showFinalButton, setShowFinalButton] = useState(false)
+
+  useEffect(() => {
+    // Marcar flores como marchitas cuando se muestra la carta
+    witherAllFlowers()
+    
+    // Mostrar botón final después de un tiempo
+    const timer = setTimeout(() => setShowFinalButton(true), 3500)
+    return () => clearTimeout(timer)
+  }, [witherAllFlowers])
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -56,13 +70,14 @@ export function FinalLetter() {
             className="bg-white rounded-2xl p-5 shadow-inner"
           >
             {/* Contenido de la carta */}
-            <div className="space-y-3 text-gray-600 leading-relaxed text-sm" style={{ fontFamily: 'Georgia, serif' }}>
+            <div className="space-y-4 text-gray-600 leading-relaxed text-sm" style={{ fontFamily: 'Georgia, serif' }}>
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9 }}
+                className="text-pink-600"
               >
-                Todo esto quedó grabado.
+                Te vi completa.
               </motion.p>
 
               <motion.p
@@ -70,7 +85,7 @@ export function FinalLetter() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.1 }}
               >
-                No como un recuerdo triste.
+                Tus luces y tus sombras.
               </motion.p>
 
               <motion.p
@@ -78,17 +93,17 @@ export function FinalLetter() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.3 }}
               >
-                Sino como algo que valió la pena.
+                Y elegí quedarme mientras pude.
               </motion.p>
 
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
-                className="pt-3 border-t border-pink-100 mt-4"
+                className="pt-4 border-t border-pink-100 mt-4"
               >
-                <p className="text-pink-500 italic">
-                  Siempre quise que tuvieras una vida grande.
+                <p className="text-gray-500 text-xs italic">
+                  Esto es lo que quedó.
                 </p>
               </motion.div>
             </div>
@@ -112,6 +127,42 @@ export function FinalLetter() {
               </motion.span>
             ))}
           </motion.div>
+
+          {/* Cierre final */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.2 }}
+            className="mt-8 pt-6 border-t border-pink-200 text-center"
+          >
+            <p className="text-gray-400 text-sm mb-1">
+              Esto era lo que me faltaba decir.
+            </p>
+            <p className="text-gray-500 text-sm">
+              Ya está dicho.
+            </p>
+            <p className="text-pink-400 mt-3 text-sm">
+              — D
+            </p>
+          </motion.div>
+
+          {/* Botón final para pantalla negra */}
+          {showFinalButton && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-8 text-center"
+            >
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={showBlackScreenFinal}
+                className="text-gray-300 text-xs hover:text-gray-400 transition-colors"
+              >
+                .
+              </motion.button>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Partículas flotantes */}
