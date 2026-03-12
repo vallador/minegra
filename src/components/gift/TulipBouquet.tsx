@@ -1,5 +1,4 @@
-'use client'
-
+import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGiftStore } from '@/store/useGiftStore'
 import { TulipFlower } from './TulipFlower'
@@ -14,6 +13,7 @@ import { FlowerIncomplete } from './flowers/FlowerIncomplete'
 import { Trivia } from './Trivia'
 import { FinalLetter } from './FinalLetter'
 import { BlackScreen } from './BlackScreen'
+import { LogOut, RotateCcw } from 'lucide-react'
 
 export function TulipBouquet() {
   const { flowers, currentFlower, openFlower, showTrivia, showLetter, showBlackScreen } = useGiftStore()
@@ -21,7 +21,7 @@ export function TulipBouquet() {
   return (
     <div className="min-h-screen w-full relative overflow-hidden">
       {/* Fondo con gradiente cálido */}
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           background: `
@@ -35,7 +35,7 @@ export function TulipBouquet() {
 
       {/* Contenido principal */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
-        
+
         {/* Título */}
         <motion.div
           initial={{ opacity: 0, y: -30 }}
@@ -43,7 +43,7 @@ export function TulipBouquet() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="text-center mb-8"
         >
-          <h1 
+          <h1
             className="text-2xl md:text-3xl font-light text-pink-600 tracking-wide"
             style={{ fontFamily: 'Georgia, serif' }}
           >
@@ -119,6 +119,9 @@ export function TulipBouquet() {
         {showLetter && !showBlackScreen && <FinalLetter />}
       </AnimatePresence>
 
+      {/* Admin Panel */}
+      <AdminPanel />
+
       {/* Pantalla negra final */}
       <AnimatePresence>
         {showBlackScreen && <BlackScreen />}
@@ -179,14 +182,14 @@ function Ribbon() {
       {/* Lazos del moño */}
       <ellipse cx="20" cy="20" rx="18" ry="12" fill="#ff91a4" />
       <ellipse cx="60" cy="20" rx="18" ry="12" fill="#ff91a4" />
-      
+
       {/* Centro del moño */}
       <circle cx="40" cy="20" r="10" fill="#ff69b4" />
-      
+
       {/* Cintas que cuelgan */}
       <path d="M35 28 Q32 45 30 50 L38 40 Q40 35 40 30 Z" fill="#ffb6c1" />
       <path d="M45 28 Q48 45 50 50 L42 40 Q40 35 40 30 Z" fill="#ffb6c1" />
-      
+
       {/* Brillos */}
       <ellipse cx="15" cy="16" rx="4" ry="3" fill="rgba(255,255,255,0.4)" />
       <ellipse cx="55" cy="16" rx="4" ry="3" fill="rgba(255,255,255,0.4)" />
@@ -219,5 +222,34 @@ function FloatingParticles() {
         />
       ))}
     </div>
+  )
+}
+
+function AdminPanel() {
+  const { isAdmin, logout, resetProgress } = useGiftStore()
+
+  if (!isAdmin) return null
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="fixed bottom-4 right-4 z-[60] flex flex-col gap-2"
+    >
+      <button
+        onClick={resetProgress}
+        className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-pink-500 hover:bg-pink-50 transition-colors flex items-center justify-center border border-pink-100"
+        title="Reiniciar Progreso"
+      >
+        <RotateCcw size={20} />
+      </button>
+      <button
+        onClick={logout}
+        className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg text-pink-500 hover:bg-pink-50 transition-colors flex items-center justify-center border border-pink-100"
+        title="Cerrar Sesión"
+      >
+        <LogOut size={20} />
+      </button>
+    </motion.div>
   )
 }

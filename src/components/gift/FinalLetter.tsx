@@ -11,7 +11,7 @@ export function FinalLetter() {
   useEffect(() => {
     // Marcar flores como marchitas cuando se muestra la carta
     witherAllFlowers()
-    
+
     // Mostrar botón final después de un tiempo
     const timer = setTimeout(() => setShowFinalButton(true), 3500)
     return () => clearTimeout(timer)
@@ -23,7 +23,7 @@ export function FinalLetter() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
-      style={{ 
+      style={{
         background: 'linear-gradient(135deg, #fff5f5 0%, #ffe5ec 50%, #ffd6e7 100%)',
       }}
     >
@@ -57,7 +57,7 @@ export function FinalLetter() {
             className="text-center mb-6"
           >
             <h1 className="text-xl font-light text-pink-600" style={{ fontFamily: 'Georgia, serif' }}>
-              Para Valentina
+              Para Negra
             </h1>
             <div className="w-16 h-0.5 bg-pink-300 mx-auto mt-2" />
           </motion.div>

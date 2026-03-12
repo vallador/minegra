@@ -26,6 +26,8 @@ interface GiftState {
 
   // Acciones
   login: (password: string) => boolean
+  logout: () => void
+  resetProgress: () => void
   openFlower: (id: number) => void
   closeFlower: () => void
   bloomFlower: (id: number) => void
@@ -69,16 +71,35 @@ export const useGiftStore = create<GiftState>()(
       triviaCompleted: false,
 
       login: (password: string) => {
-        const pass = password.toLowerCase()
-        if (pass === 'vale2026') {
+        const pass = password.trim().toLowerCase()
+        console.log('Intentando login con:', pass) // Debug para el usuario en consola
+        if (pass === 'negra2026') {
+          console.log('Login exitoso como Negra')
           set({ isLoggedIn: true, isAdmin: false })
           return true
         }
-        if (pass === 'adminvale') {
+        if (pass === 'adminnegra') {
+          console.log('Login exitoso como Admin')
           set({ isLoggedIn: true, isAdmin: true })
           return true
         }
+        console.log('Contraseña incorrecta')
         return false
+      },
+
+      logout: () => {
+        set({ isLoggedIn: false, isAdmin: false })
+      },
+
+      resetProgress: () => {
+        set({
+          flowers: initialFlowers,
+          currentFlower: null,
+          showTrivia: false,
+          showLetter: false,
+          showBlackScreen: false,
+          triviaCompleted: false
+        })
       },
 
       getTimeUntilUnlock: (id: number) => {
@@ -205,6 +226,7 @@ export const useGiftStore = create<GiftState>()(
     }),
     {
       name: 'gift-storage',
+      version: 1, // Incrementar para forzar limpieza de estados antiguos
     }
   )
 )

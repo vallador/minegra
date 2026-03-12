@@ -8,52 +8,25 @@ import { TulipFlower } from './TulipFlower'
 export function Login() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState(false)
-    const login = useGiftStore(state => state.login)
+    const { login, isLoggedIn } = useGiftStore()
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
+        console.log('Botón presionado, enviando:', password)
         const success = login(password)
         if (!success) {
+            console.log('Resultado del login: fallido')
             setError(true)
             setTimeout(() => setError(false), 800)
+        } else {
+            console.log('Resultado del login: exitoso, isLoggedIn:', useGiftStore.getState().isLoggedIn)
         }
     }
 
     return (
         <div className="min-h-screen w-full relative flex items-center justify-center overflow-hidden">
-            {/* Fondo con gradiente cálido similar al bouquet */}
-            <div
-                className="absolute inset-0"
-                style={{
-                    background: `
-            radial-gradient(ellipse at top, #fff5f5 0%, #fff0f5 30%, #ffe5ec 60%, #ffd6e7 100%)
-          `,
-                }}
-            />
-
-            {/* Partículas flotantes */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {[...Array(6)].map((_, i) => (
-                    <motion.div
-                        key={i}
-                        className="absolute w-2 h-2 rounded-full"
-                        style={{
-                            background: 'rgba(255,182,193,0.3)',
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                        }}
-                        animate={{
-                            y: [0, -30, 0],
-                            opacity: [0.2, 0.4, 0.2],
-                        }}
-                        transition={{
-                            duration: 4 + Math.random() * 2,
-                            repeat: Infinity,
-                            delay: Math.random() * 2,
-                        }}
-                    />
-                ))}
-            </div>
+            {/* Fondo Geométrico Dinámico */}
+            <GeometricBackground />
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -75,7 +48,7 @@ export function Login() {
                         className="text-3xl font-light text-pink-600 tracking-wide"
                         style={{ fontFamily: 'Georgia, serif' }}
                     >
-                        Para Vale
+                        Para mi Negra
                     </h1>
                     <p className="text-pink-400 mt-2 text-sm italic">
                         Introduce la clave para entrar
@@ -111,8 +84,74 @@ export function Login() {
                     >
                         ENTRAR
                     </motion.button>
+
+                    {/* Botón de reseteo de emergencia - muy discreto */}
+                    <div className="pt-8 text-center">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                localStorage.clear();
+                                window.location.reload();
+                            }}
+                            className="text-[10px] text-pink-200 hover:text-pink-300 transition-colors uppercase tracking-widest"
+                        >
+                            Limpiar caché del regalo
+                        </button>
+                    </div>
                 </form>
             </motion.div>
+        </div>
+    )
+}
+
+function GeometricBackground() {
+    return (
+        <div className="absolute inset-0 overflow-hidden bg-[#fff5f7]">
+            {/* Gradiente de base */}
+            <div
+                className="absolute inset-0"
+                style={{
+                    background: 'radial-gradient(circle at 50% 50%, #fffafb 0%, #ffeef2 100%)'
+                }}
+            />
+
+            {/* Formas geométricas animadas */}
+            {[...Array(15)].map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute opacity-20"
+                    style={{
+                        width: Math.random() * 300 + 50,
+                        height: Math.random() * 300 + 50,
+                        backgroundColor: i % 2 === 0 ? '#ffdae0' : '#ffd1dc',
+                        borderRadius: i % 3 === 0 ? '30% 70% 70% 30% / 30% 30% 70% 70%' : i % 3 === 1 ? '50%' : '0%',
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        filter: 'blur(40px)',
+                    }}
+                    animate={{
+                        x: [0, Math.random() * 100 - 50, 0],
+                        y: [0, Math.random() * 100 - 50, 0],
+                        rotate: [0, 360],
+                        scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                        duration: 15 + Math.random() * 10,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                />
+            ))}
+
+            {/* Líneas geométricas finas */}
+            <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffb6c1" strokeWidth="0.5" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
         </div>
     )
 }
