@@ -291,7 +291,7 @@ interface TulipPetalProps {
   isWithered: boolean
 }
 
-function TulipPetal({ color, darkerColor, style, isWithered }: TulipPetalProps) {
+export function TulipPetal({ color, darkerColor, style, isWithered }: TulipPetalProps) {
   return (
     <motion.div
       style={{

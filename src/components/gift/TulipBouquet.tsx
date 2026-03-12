@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGiftStore } from '@/store/useGiftStore'
-import { TulipFlower } from './TulipFlower'
+import { TulipFlower, TulipPetal } from './TulipFlower'
 import { FlowerInicio } from './flowers/FlowerInicio'
 import { FlowerLoma } from './flowers/FlowerLoma'
 import { FlowerLluvia } from './flowers/FlowerLluvia'
@@ -14,28 +14,50 @@ import { Trivia } from './Trivia'
 import { FinalLetter } from './FinalLetter'
 import { BlackScreen } from './BlackScreen'
 import { LogOut, RotateCcw } from 'lucide-react'
-
 export function TulipBouquet() {
   const { flowers, currentFlower, openFlower, showTrivia, showLetter, showBlackScreen } = useGiftStore()
 
+  const decorativePositions = [
+    { x: -70, y: -20, rotate: -35, scale: 0.8 },
+    { x: -35, y: -90, rotate: -10, scale: 0.85 },
+    { x: 35, y: -85, rotate: 15, scale: 0.8 },
+    { x: 70, y: -15, rotate: 40, scale: 0.85 },
+    { x: -65, y: 50, rotate: -25, scale: 0.9 },
+    { x: 65, y: 45, rotate: 30, scale: 0.8 },
+    { x: -20, y: 90, rotate: -5, scale: 0.85 },
+    { x: 45, y: 80, rotate: 12, scale: 0.8 },
+    { x: 0, y: -50, rotate: 0, scale: 0.75 },
+    { x: -85, y: 15, rotate: -45, scale: 0.7 },
+  ]
+
   return (
     <div className="min-h-screen w-full relative overflow-hidden bg-[#fffdfa]">
-      {/* Fondo elaborado Blanco/Crema */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Imagen de fondo pexels paloma/naturaleza */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'url("/bouquet-background.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.85,
+          filter: 'brightness(1.05) saturate(1.1)'
+        }}
+      />
+
+      {/* Overlay suave Blanco/Crema para legibilidad */}
+      <div className="absolute inset-0 pointer-events-none z-[1]">
         <div
-          className="absolute inset-0 opacity-40"
+          className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(circle at 20% 20%, #fffaf0 0%, transparent 40%),
-              radial-gradient(circle at 80% 80%, #fff5e6 0%, transparent 40%),
-              linear-gradient(135deg, #ffffff 0%, #fff9f0 100%)
+              radial-gradient(circle at 50% 50%, rgba(255,253,250,0.2) 0%, rgba(255,253,250,0.5) 100%)
             `
           }}
         />
         {/* Patrón decorativo sutil */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+        <svg className="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
           <pattern id="leaf-pattern" width="100" height="100" patternUnits="userSpaceOnUse">
-            <path d="M50 20 Q60 40 50 60 Q40 40 50 20" fill="currentColor" className="text-pink-300" />
+            <path d="M50 20 Q60 40 50 60 Q40 40 50 20" fill="currentColor" className="text-pink-200" />
           </pattern>
           <rect width="100%" height="100%" fill="url(#leaf-pattern)" />
         </svg>
@@ -83,7 +105,12 @@ export function TulipBouquet() {
             <Ribbon />
           </motion.div>
 
-          {/* Tulipanes */}
+          {/* TULIPANES DECORATIVOS (Blancos, al fondo) */}
+          {decorativePositions.map((pos, i) => (
+            <DecorativeTulip key={`dec-${i}`} pos={pos} index={i} />
+          ))}
+
+          {/* TULIPANES FUNCIONALES */}
           {flowers.map((flower, index) => (
             <TulipFlower
               key={flower.id}
@@ -104,7 +131,7 @@ export function TulipBouquet() {
           className="mt-12 text-center"
         >
           <p className="text-pink-300 text-[10px] tracking-widest uppercase">
-            {flowers.filter(f => f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete').length} / 8 completados
+            {flowers.filter(f => f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete').length} / 8 historias
           </p>
         </motion.div>
       </div>
@@ -290,5 +317,101 @@ function ExtraLeaves() {
         />
       ))}
     </div>
+  )
+}
+
+function DecorativeTulip({ pos, index }: { pos: any, index: number }) {
+  const colors = {
+    primary: '#ffffff',
+    secondary: '#f9f9f9',
+    petal: '#fffefc'
+  }
+
+  return (
+    <motion.div
+      className="absolute"
+      style={{
+        left: `calc(50% + ${pos.x}px)`,
+        top: `calc(45% + ${pos.y}px)`,
+        transform: `translate(-50%, -50%)`,
+        zIndex: 5,
+        scale: pos.scale,
+        rotate: pos.rotate
+      }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{
+        scale: pos.scale,
+        opacity: 0.8,
+        rotate: pos.rotate
+      }}
+      transition={{
+        delay: index * 0.05,
+        duration: 1,
+        type: 'spring'
+      }}
+    >
+      {/* Tallo decorativo */}
+      <div
+        className="absolute"
+        style={{
+          width: '3px',
+          height: '100px',
+          background: 'linear-gradient(to bottom, #3d7a35, #1a3d15)',
+          borderRadius: '2px',
+          left: '50%',
+          top: '50%',
+          transform: 'translateX(-50%)',
+          opacity: 0.3,
+        }}
+      />
+
+      {/* Flor decorativa (Blanca) */}
+      <div
+        className="relative"
+        style={{
+          width: '42px',
+          height: '52px',
+          top: '-12px',
+          opacity: 0.85,
+        }}
+      >
+        <TulipPetal
+          color={colors.primary}
+          darkerColor={colors.secondary}
+          style={{
+            left: '50%',
+            top: '0%',
+            transform: 'translateX(-50%) rotate(0deg)',
+            width: '30px',
+            height: '45px',
+          }}
+          isWithered={false}
+        />
+        <TulipPetal
+          color={colors.petal}
+          darkerColor={colors.primary}
+          style={{
+            left: '4px',
+            top: '4px',
+            transform: 'rotate(-12deg)',
+            width: '24px',
+            height: '38px',
+          }}
+          isWithered={false}
+        />
+        <TulipPetal
+          color={colors.petal}
+          darkerColor={colors.primary}
+          style={{
+            right: '4px',
+            top: '4px',
+            transform: 'rotate(12deg)',
+            width: '24px',
+            height: '38px',
+          }}
+          isWithered={false}
+        />
+      </div>
+    </motion.div>
   )
 }
