@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useGiftStore, FlowerStatus } from '@/store/useGiftStore'
 
@@ -57,12 +58,12 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
         transform: `translate(-50%, -50%)`,
       }}
       initial={{ scale: 0, opacity: 0 }}
-      animate={{ 
-        scale: 1, 
+      animate={{
+        scale: 1,
         opacity: 1,
         rotate: pos.rotate
       }}
-      transition={{ 
+      transition={{
         delay: index * 0.12,
         duration: 0.6,
         type: 'spring',
@@ -78,8 +79,8 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
         style={{
           width: '4px',
           height: '75px',
-          background: isWithered 
-            ? 'linear-gradient(to bottom, #8b7355, #6b5344)' 
+          background: isWithered
+            ? 'linear-gradient(to bottom, #8b7355, #6b5344)'
             : 'linear-gradient(to bottom, #2d5a27, #1a3d15)',
           borderRadius: '2px',
           left: '50%',
@@ -103,8 +104,8 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
             position: 'absolute',
             width: '18px',
             height: '30px',
-            background: isWithered 
-              ? 'linear-gradient(135deg, #8b7355, #6b5344)' 
+            background: isWithered
+              ? 'linear-gradient(135deg, #8b7355, #6b5344)'
               : 'linear-gradient(135deg, #3d7a35, #2d5a27)',
             borderRadius: '0 50% 50% 50%',
             left: '2px',
@@ -118,8 +119,8 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
             position: 'absolute',
             width: '16px',
             height: '26px',
-            background: isWithered 
-              ? 'linear-gradient(135deg, #8b7355, #6b5344)' 
+            background: isWithered
+              ? 'linear-gradient(135deg, #8b7355, #6b5344)'
               : 'linear-gradient(135deg, #4a8a42, #3d7a35)',
             borderRadius: '50% 0 50% 50%',
             right: '2px',
@@ -149,8 +150,8 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
         }}
       >
         {/* Pétalos exteriores */}
-        <TulipPetal 
-          color={colors.primary} 
+        <TulipPetal
+          color={colors.primary}
           darkerColor={colors.secondary}
           style={{
             left: '50%',
@@ -161,10 +162,10 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
           }}
           isWithered={isWithered}
         />
-        
+
         {/* Pétalo izquierdo */}
-        <TulipPetal 
-          color={colors.petal} 
+        <TulipPetal
+          color={colors.petal}
           darkerColor={colors.primary}
           style={{
             left: '4px',
@@ -175,10 +176,10 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
           }}
           isWithered={isWithered}
         />
-        
+
         {/* Pétalo derecho */}
-        <TulipPetal 
-          color={colors.petal} 
+        <TulipPetal
+          color={colors.petal}
           darkerColor={colors.primary}
           style={{
             right: '4px',
@@ -258,13 +259,50 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap"
+            className="absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap flex flex-col items-center"
           >
-            <span className="text-xs text-gray-300">🔒</span>
+            <span className="text-[10px] text-gray-400 font-light">
+              <Countdown id={id} />
+            </span>
+            <span className="text-xs text-gray-300 opacity-50">🔒</span>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
+  )
+}
+
+function Countdown({ id }: { id: number }) {
+  const getTimeUntilUnlock = useGiftStore(state => state.getTimeUntilUnlock)
+  const [timeLeft, setTimeLeft] = React.useState(getTimeUntilUnlock(id))
+
+  React.useEffect(() => {
+    if (timeLeft <= 0) return
+
+    const timer = setInterval(() => {
+      const remaining = getTimeUntilUnlock(id)
+      setTimeLeft(remaining)
+      if (remaining <= 0) {
+        clearInterval(timer)
+        // Forzar re-render de la flor si es necesario (el store canOpen ya cambiará)
+        window.location.reload() // O simplemente dejar que el estado global maneje el cambio
+      }
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [id, getTimeUntilUnlock, timeLeft])
+
+  if (timeLeft <= 0) return null
+
+  const hours = Math.floor(timeLeft / (1000 * 60 * 60))
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
+
+  return (
+    <span>
+      {hours > 0 && `${hours}h `}
+      {minutes > 0 ? `${minutes}m` : hours > 0 ? '0m' : `${seconds}s`}
+    </span>
   )
 }
 
@@ -288,7 +326,7 @@ function TulipPetal({ color, darkerColor, style, isWithered }: TulipPetalProps) 
         top: style.top,
         right: (style as any).right,
         transform: style.transform,
-        boxShadow: isWithered 
+        boxShadow: isWithered
           ? 'inset 0 2px 8px rgba(0,0,0,0.2)'
           : `inset 0 5px 15px rgba(255,255,255,0.3), inset 0 -5px 10px rgba(0,0,0,0.1), 2px 4px 8px rgba(0,0,0,0.15)`,
         opacity: isWithered ? 0.6 : 1,

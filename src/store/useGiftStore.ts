@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 export type FlowerStatus = 'closed' | 'open' | 'bloomed' | 'withered' | 'incomplete'
 
@@ -9,17 +10,22 @@ export interface Flower {
 }
 
 interface GiftState {
+  // Seguridad
+  isLoggedIn: boolean
+  isAdmin: boolean
+
   // Flores
   flowers: Flower[]
   currentFlower: number | null
-  
+
   // Estados finales
   showTrivia: boolean
   showLetter: boolean
   showBlackScreen: boolean
   triviaCompleted: boolean
-  
+
   // Acciones
+  login: (password: string) => boolean
   openFlower: (id: number) => void
   closeFlower: () => void
   bloomFlower: (id: number) => void
@@ -28,10 +34,11 @@ interface GiftState {
   completeTrivia: () => void
   showFinalLetter: () => void
   showBlackScreenFinal: () => void
-  
+
   // Helpers
   allBloomed: () => boolean
   canOpenFlower: (id: number) => boolean
+  getTimeUntilUnlock: (id: number) => number // ms
 }
 
 // 8 tulipanes - el último será especial
@@ -43,116 +50,161 @@ const initialFlowers: Flower[] = [
   { id: 5, title: 'Basket', status: 'closed' },
   { id: 6, title: 'Hogar', status: 'closed' },
   { id: 7, title: 'Tú', status: 'closed' },
-  { id: 8, title: '?', status: 'closed' }, // La flor especial que nunca florece
+  { id: 8, title: '?', status: 'closed' },
 ]
 
-export const useGiftStore = create<GiftState>((set, get) => ({
-  flowers: initialFlowers,
-  currentFlower: null,
-  showTrivia: false,
-  showLetter: false,
-  showBlackScreen: false,
-  triviaCompleted: false,
-  
-  canOpenFlower: (id: number) => {
-    const state = get()
-    // La primera flor siempre se puede abrir
-    if (id === 1) return true
-    
-    // Para abrir la flor N, la flor N-1 debe estar florecida o marchita
-    const previousFlower = state.flowers.find(f => f.id === id - 1)
-    if (!previousFlower) return false
-    
-    return previousFlower.status === 'bloomed' || previousFlower.status === 'withered'
-  },
-  
-  openFlower: (id: number) => {
-    const state = get()
-    
-    // Verificar si puede abrir esta flor
-    if (!state.canOpenFlower(id)) return
-    
-    // La flor 8 es especial - nunca florece completamente
-    if (id === 8) {
-      set(state => ({
-        flowers: state.flowers.map(f => 
-          f.id === id ? { ...f, status: 'incomplete' as FlowerStatus } : f
-        ),
-        currentFlower: id
-      }))
-      return
-    }
-    
-    set(state => ({
-      flowers: state.flowers.map(f => 
-        f.id === id ? { ...f, status: 'open' as FlowerStatus } : f
-      ),
-      currentFlower: id
-    }))
-  },
-  
-  closeFlower: () => {
-    set({ currentFlower: null })
-  },
-  
-  bloomFlower: (id: number) => {
-    set(state => {
-      const newFlowers = state.flowers.map(f => 
-        f.id === id ? { ...f, status: 'bloomed' as FlowerStatus } : f
-      )
-      
-      // Verificar si todas las flores están completas (7 normales florecidas + 1 incompleta)
-      const allComplete = newFlowers.every(f => 
-        f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete'
-      )
-      
-      return {
-        flowers: newFlowers,
-        currentFlower: null,
-        showTrivia: allComplete
-      }
-    })
-  },
-  
-  witherAllFlowers: () => {
-    set(state => ({
-      flowers: state.flowers.map(f => 
-        f.status === 'bloomed' ? { ...f, status: 'withered' as FlowerStatus } : f
-      )
-    }))
-  },
-  
-  markIncomplete: (id: number) => {
-    set(state => ({
-      flowers: state.flowers.map(f => 
-        f.id === id ? { ...f, status: 'incomplete' as FlowerStatus } : f
-      ),
-      currentFlower: null
-    }))
-  },
-  
-  completeTrivia: () => {
-    set({ 
-      showTrivia: false, 
-      triviaCompleted: true,
-      showLetter: true 
-    })
-  },
-  
-  showFinalLetter: () => {
-    set({ showLetter: true })
-  },
-  
-  showBlackScreenFinal: () => {
-    set({ 
+const START_TIME = new Date('2026-03-23T00:00:00-05:00').getTime()
+const INTERVAL = 3 * 60 * 60 * 1000 // 3 horas
+
+export const useGiftStore = create<GiftState>()(
+  persist(
+    (set, get) => ({
+      isLoggedIn: false,
+      isAdmin: false,
+      flowers: initialFlowers,
+      currentFlower: null,
+      showTrivia: false,
       showLetter: false,
-      showBlackScreen: true 
-    })
-  },
-  
-  allBloomed: () => {
-    return get().flowers.every(f => 
-      f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete'
-    )
-  }
-}))
+      showBlackScreen: false,
+      triviaCompleted: false,
+
+      login: (password: string) => {
+        const pass = password.toLowerCase()
+        if (pass === 'vale2026') {
+          set({ isLoggedIn: true, isAdmin: false })
+          return true
+        }
+        if (pass === 'adminvale') {
+          set({ isLoggedIn: true, isAdmin: true })
+          return true
+        }
+        return false
+      },
+
+      getTimeUntilUnlock: (id: number) => {
+        if (get().isAdmin) return 0
+        const now = Date.now()
+        const unlockTime = START_TIME + (id - 1) * INTERVAL
+        return Math.max(0, unlockTime - now)
+      },
+
+      canOpenFlower: (id: number) => {
+        const state = get()
+
+        // Bypass para admin
+        if (state.isAdmin) return true
+
+        // Verificar tiempo
+        const now = Date.now()
+        const unlockTime = START_TIME + (id - 1) * INTERVAL
+        if (now < unlockTime) return false
+
+        // La primera flor siempre se puede abrir si el tiempo pasó
+        if (id === 1) return true
+
+        // Para abrir la flor N, la flor N-1 debe estar florecida o marchita o incompleta
+        const previousFlower = state.flowers.find(f => f.id === id - 1)
+        if (!previousFlower) return false
+
+        return (
+          previousFlower.status === 'bloomed' ||
+          previousFlower.status === 'withered' ||
+          previousFlower.status === 'incomplete'
+        )
+      },
+
+      openFlower: (id: number) => {
+        const state = get()
+
+        // Verificar si puede abrir esta flor
+        if (!state.canOpenFlower(id)) return
+
+        // La flor 8 es especial - mensaje de futuro e "intriga"
+        if (id === 8) {
+          set(state => ({
+            flowers: state.flowers.map(f =>
+              f.id === id ? { ...f, status: 'incomplete' as FlowerStatus } : f
+            ),
+            currentFlower: id
+          }))
+          return
+        }
+
+        set(state => ({
+          flowers: state.flowers.map(f =>
+            f.id === id ? { ...f, status: 'open' as FlowerStatus } : f
+          ),
+          currentFlower: id
+        }))
+      },
+
+      closeFlower: () => {
+        set({ currentFlower: null })
+      },
+
+      bloomFlower: (id: number) => {
+        set(state => {
+          const newFlowers = state.flowers.map(f =>
+            f.id === id ? { ...f, status: 'bloomed' as FlowerStatus } : f
+          )
+
+          // Verificar si todas las flores están completas (7 normales florecidas + 1 incompleta)
+          const allComplete = newFlowers.every(f =>
+            f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete'
+          )
+
+          return {
+            flowers: newFlowers,
+            currentFlower: null,
+            showTrivia: allComplete
+          }
+        })
+      },
+
+      witherAllFlowers: () => {
+        set(state => ({
+          flowers: state.flowers.map(f =>
+            f.status === 'bloomed' ? { ...f, status: 'withered' as FlowerStatus } : f
+          )
+        }))
+      },
+
+      markIncomplete: (id: number) => {
+        set(state => ({
+          flowers: state.flowers.map(f =>
+            f.id === id ? { ...f, status: 'incomplete' as FlowerStatus } : f
+          ),
+          currentFlower: null
+        }))
+      },
+
+      completeTrivia: () => {
+        set({
+          showTrivia: false,
+          triviaCompleted: true,
+          showLetter: true
+        })
+      },
+
+      showFinalLetter: () => {
+        set({ showLetter: true })
+      },
+
+      showBlackScreenFinal: () => {
+        set({
+          showLetter: false,
+          showBlackScreen: true
+        })
+      },
+
+      allBloomed: () => {
+        return get().flowers.every(f =>
+          f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete'
+        )
+      }
+    }),
+    {
+      name: 'gift-storage',
+    }
+  )
+)
