@@ -19,59 +19,66 @@ export function TulipBouquet() {
   const { flowers, currentFlower, openFlower, showTrivia, showLetter, showBlackScreen } = useGiftStore()
 
   return (
-    <div className="min-h-screen w-full relative overflow-hidden">
-      {/* Fondo con gradiente cálido */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: `
-            radial-gradient(ellipse at top, #fff5f5 0%, #fff0f5 30%, #ffe5ec 60%, #ffd6e7 100%)
-          `,
-        }}
-      />
+    <div className="min-h-screen w-full relative overflow-hidden bg-[#fffdfa]">
+      {/* Fondo elaborado Blanco/Crema */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{
+            background: `
+              radial-gradient(circle at 20% 20%, #fffaf0 0%, transparent 40%),
+              radial-gradient(circle at 80% 80%, #fff5e6 0%, transparent 40%),
+              linear-gradient(135deg, #ffffff 0%, #fff9f0 100%)
+            `
+          }}
+        />
+        {/* Patrón decorativo sutil */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
+          <pattern id="leaf-pattern" width="100" height="100" patternUnits="userSpaceOnUse">
+            <path d="M50 20 Q60 40 50 60 Q40 40 50 20" fill="currentColor" className="text-pink-300" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#leaf-pattern)" />
+        </svg>
+      </div>
 
-      {/* Partículas flotantes de fondo */}
+      {/* Partículas flotantes */}
       <FloatingParticles />
 
       {/* Contenido principal */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
 
-        {/* Título */}
+        {/* Título más ligero y elegante */}
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          className="text-center mb-8"
+          transition={{ duration: 1 }}
+          className="text-center mb-12"
         >
           <h1
-            className="text-2xl md:text-3xl font-light text-pink-600 tracking-wide"
+            className="text-3xl md:text-4xl font-light text-pink-500/80 tracking-[0.2em] uppercase mb-3"
             style={{ fontFamily: 'Georgia, serif' }}
           >
-            Lo que quedó
+            Nuestro Ramo
           </h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
-            className="text-pink-400 mt-2 text-xs"
-          >
-            En orden
-          </motion.p>
+          <div className="h-[1px] w-24 bg-pink-100 mx-auto" />
         </motion.div>
 
-        {/* Ramo de tulipanes */}
+        {/* Ramo de tulipanes MÁS GRANDE */}
         <motion.div
-          className="relative w-72 h-80 md:w-80 md:h-88"
-          initial={{ scale: 0.8, opacity: 0 }}
+          className="relative w-80 h-[450px] md:w-[400px] md:h-[500px]"
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
+          transition={{ duration: 1, type: 'spring' }}
         >
+          {/* Hojitas verdes extra para el fondo del ramo */}
+          <ExtraLeaves />
+
           {/* Moño decorativo */}
           <motion.div
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 z-20"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 1.2, duration: 0.5, type: 'spring' }}
+            transition={{ delay: 1, duration: 0.5, type: 'spring' }}
           >
             <Ribbon />
           </motion.div>
@@ -94,10 +101,10 @@ export function TulipBouquet() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
-          className="mt-8 text-center"
+          className="mt-12 text-center"
         >
-          <p className="text-pink-400 text-xs">
-            {flowers.filter(f => f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete').length} de 8
+          <p className="text-pink-300 text-[10px] tracking-widest uppercase">
+            {flowers.filter(f => f.status === 'bloomed' || f.status === 'withered' || f.status === 'incomplete').length} / 8 completados
           </p>
         </motion.div>
       </div>
@@ -251,5 +258,37 @@ function AdminPanel() {
         <LogOut size={20} />
       </button>
     </motion.div>
+  )
+}
+
+function ExtraLeaves() {
+  return (
+    <div className="absolute inset-0 pointer-events-none z-10">
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            width: '28px',
+            height: '50px',
+            background: i % 2 === 0
+              ? 'linear-gradient(to bottom, #4a8a42, #1a3d15)'
+              : 'linear-gradient(to bottom, #5d9b54, #2d5a27)',
+            borderRadius: i % 2 === 0 ? '0 50% 0 50%' : '50% 0 50% 0',
+            left: `${10 + Math.random() * 80}%`,
+            top: `${15 + Math.random() * 70}%`,
+            opacity: 0.35,
+            rotate: Math.random() * 360,
+          }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.35 }}
+          transition={{
+            delay: 0.5 + i * 0.1,
+            duration: 1.5,
+            type: 'spring'
+          }}
+        />
+      ))}
+    </div>
   )
 }
