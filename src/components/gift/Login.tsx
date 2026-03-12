@@ -107,51 +107,51 @@ export function Login() {
 function GeometricBackground() {
     return (
         <div className="absolute inset-0 overflow-hidden bg-[#fff5f7]">
-            {/* Gradiente de base */}
+            {/* Imagen de fondo pexels */}
             <div
-                className="absolute inset-0"
+                className="absolute inset-0 z-0"
                 style={{
-                    background: 'radial-gradient(circle at 50% 50%, #fffafb 0%, #ffeef2 100%)'
+                    backgroundImage: 'url("/pexels-background.jpg")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'brightness(0.9) saturate(1.2)'
                 }}
             />
 
-            {/* Formas geométricas animadas */}
-            {[...Array(15)].map((_, i) => (
+            {/* Overlay suave para legibilidad */}
+            <div
+                className="absolute inset-0 z-1"
+                style={{
+                    background: 'radial-gradient(circle at 50% 50%, rgba(255,245,247,0.3) 0%, rgba(255,238,242,0.6) 100%)'
+                }}
+            />
+
+            {/* Formas geométricas animadas (ahora como decoración sobre la imagen) */}
+            {[...Array(8)].map((_, i) => (
                 <motion.div
                     key={i}
-                    className="absolute opacity-20"
+                    className="absolute opacity-10 z-2"
                     style={{
-                        width: Math.random() * 300 + 50,
-                        height: Math.random() * 300 + 50,
+                        width: Math.random() * 200 + 50,
+                        height: Math.random() * 200 + 50,
                         backgroundColor: i % 2 === 0 ? '#ffdae0' : '#ffd1dc',
                         borderRadius: i % 3 === 0 ? '30% 70% 70% 30% / 30% 30% 70% 70%' : i % 3 === 1 ? '50%' : '0%',
                         left: `${Math.random() * 100}%`,
                         top: `${Math.random() * 100}%`,
-                        filter: 'blur(40px)',
+                        filter: 'blur(30px)',
                     }}
                     animate={{
-                        x: [0, Math.random() * 100 - 50, 0],
-                        y: [0, Math.random() * 100 - 50, 0],
+                        x: [0, Math.random() * 50 - 25, 0],
+                        y: [0, Math.random() * 50 - 25, 0],
                         rotate: [0, 360],
-                        scale: [1, 1.2, 1],
                     }}
                     transition={{
-                        duration: 15 + Math.random() * 10,
+                        duration: 20 + Math.random() * 10,
                         repeat: Infinity,
                         ease: "linear"
                     }}
                 />
             ))}
-
-            {/* Líneas geométricas finas */}
-            <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffb6c1" strokeWidth="0.5" />
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
         </div>
     )
 }
