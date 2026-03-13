@@ -123,6 +123,9 @@ export function TulipBouquet() {
           ))}
         </motion.div>
 
+        {/* Nota Misteriosa (Post-it) */}
+        <PostIt />
+
         {/* Indicador de progreso */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -414,6 +417,42 @@ function DecorativeTulip({ pos, index }: { pos: any, index: number }) {
             height: '38px',
           }}
           isWithered={false}
+        />
+      </div>
+    </motion.div>
+  )
+}
+
+function PostIt() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 50, rotate: 5 }}
+      animate={{ opacity: 1, x: 0, rotate: -2 }}
+      transition={{ delay: 1.5, duration: 1 }}
+      className="absolute bottom-10 right-4 md:right-10 z-30 max-w-[170px] md:max-w-[200px]"
+    >
+      <div
+        className="relative bg-[#fef9c3] p-4 shadow-xl border-l-4 border-yellow-200"
+        style={{
+          clipPath: 'polygon(0% 0%, 100% 0%, 100% 90%, 90% 100%, 0% 100%)',
+          boxShadow: '2px 10px 20px rgba(0,0,0,0.1)',
+        }}
+      >
+        {/* Chincheta/Pin decorativo */}
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 bg-red-500 rounded-full shadow-inner" />
+
+        <p
+          className="text-[#854d0e] text-[10px] md:text-xs leading-relaxed italic text-center pt-2"
+          style={{ fontFamily: 'var(--font-georgia), serif' }}
+        >
+          "Cada tres horas, un misterio florece. Un nuevo regalo, una historia que contar.
+          Paciencia, pues cada pétalo guarda un secreto diferente..."
+        </p>
+
+        {/* Doblez del papel */}
+        <div
+          className="absolute bottom-0 right-0 w-4 h-4 bg-yellow-100 shadow-inner"
+          style={{ clipPath: 'polygon(0 100%, 100% 100%, 100% 0)' }}
         />
       </div>
     </motion.div>

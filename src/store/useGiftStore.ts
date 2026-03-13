@@ -55,7 +55,7 @@ const initialFlowers: Flower[] = [
   { id: 8, title: '?', status: 'closed' },
 ]
 
-const START_TIME = new Date('2026-03-23T00:00:00-05:00').getTime()
+const START_TIME = new Date('2026-03-13T00:00:00-04:00').getTime()
 const INTERVAL = 3 * 60 * 60 * 1000 // 3 horas
 
 export const useGiftStore = create<GiftState>()(
@@ -226,7 +226,7 @@ export const useGiftStore = create<GiftState>()(
     }),
     {
       name: 'gift-storage',
-      version: 1, // Incrementar para forzar limpieza de estados antiguos
+      version: 2, // Incrementar para forzar limpieza de estados antiguos
     }
   )
 )

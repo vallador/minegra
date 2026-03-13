@@ -19,6 +19,17 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
   const isWithered = status === 'withered'
   const isIncomplete = status === 'incomplete'
 
+  const [showTimer, setShowTimer] = React.useState(false)
+
+  const handleTulipClick = () => {
+    if (isClosed && canOpen) {
+      onClick()
+    } else if (isClosed && !canOpen) {
+      setShowTimer(true)
+      setTimeout(() => setShowTimer(false), 3000)
+    }
+  }
+
   // Posiciones MÁS AMPLIAS para los 8 tulipanes en el ramo (ajustado a bouquet más grande)
   const positions = [
     { x: -55, y: -45, rotate: -22 },
@@ -81,9 +92,9 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
         type: 'spring',
         stiffness: 80
       }}
-      whileHover={isClosed && canOpen ? { scale: 1.1, y: -10 } : {}}
-      whileTap={isClosed && canOpen ? { scale: 0.95 } : {}}
-      onClick={isClosed && canOpen ? onClick : undefined}
+      whileHover={isClosed ? { scale: 1.1, y: -10 } : {}}
+      whileTap={isClosed ? { scale: 0.95 } : {}}
+      onClick={handleTulipClick}
     >
       {/* Tallo */}
       <motion.div
@@ -233,17 +244,17 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
               />
             </motion.div>
-          ) : isClosed && !canOpen ? (
+          ) : isClosed && !canOpen && showTimer ? (
             <motion.div
               key="timer"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
               className="bg-white/40 backdrop-blur-[2px] px-2 py-0.5 rounded-full border border-white/50"
             >
               <div className="flex items-center gap-1">
                 <span className="text-[9px] text-gray-400">🔒</span>
-                <span className="text-[9px] text-gray-500 font-medium tracking-tight">
+                <span className="text-[9px] text-gray-500 font-bold tracking-tight">
                   <Countdown id={id} />
                 </span>
               </div>
