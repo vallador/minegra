@@ -63,8 +63,8 @@ export function TulipBouquet() {
         </svg>
       </div>
 
-      {/* Partículas flotantes */}
-      <FloatingParticles />
+      {/* Luciérnagas mágicas doradas */}
+      <GoldenFireflies />
 
       {/* Contenido principal */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
@@ -77,10 +77,10 @@ export function TulipBouquet() {
           className="text-center mb-12"
         >
           <h1
-            className="text-3xl md:text-4xl font-light text-pink-500/80 tracking-[0.2em] uppercase mb-3"
+            className="text-3xl md:text-4xl font-bold text-white tracking-[0.2em] uppercase mb-3 drop-shadow-md"
             style={{ fontFamily: 'Georgia, serif' }}
           >
-            Nuestro Ramo
+            Más que un Ramo
           </h1>
           <div className="h-[1px] w-24 bg-pink-100 mx-auto" />
         </motion.div>
@@ -231,27 +231,31 @@ function Ribbon() {
   )
 }
 
-function FloatingParticles() {
+function GoldenFireflies() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(12)].map((_, i) => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+      {[...Array(25)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-2 h-2 rounded-full"
+          className="absolute rounded-full"
           style={{
-            background: i % 2 === 0 ? 'rgba(255,182,193,0.4)' : 'rgba(255,105,180,0.3)',
+            width: Math.random() * 3 + 1.5,
+            height: Math.random() * 3 + 1.5,
+            background: 'radial-gradient(circle, #ffd700 0%, #ff8c00 100%)',
+            boxShadow: '0 0 10px #ffcc00, 0 0 20px rgba(255, 204, 0, 0.4)',
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, -30, 0],
-            x: [0, Math.random() * 20 - 10, 0],
-            opacity: [0.3, 0.6, 0.3],
+            x: [0, Math.random() * 100 - 50, Math.random() * 50 - 25, 0],
+            y: [0, Math.random() * 100 - 50, Math.random() * 50 - 25, 0],
+            opacity: [0.2, 0.8, 0.4, 1, 0.2],
+            scale: [1, 1.2, 0.8, 1.1, 1],
           }}
           transition={{
-            duration: 5 + Math.random() * 3,
+            duration: 10 + Math.random() * 20,
             repeat: Infinity,
-            delay: Math.random() * 2,
+            ease: "easeInOut",
           }}
         />
       ))}

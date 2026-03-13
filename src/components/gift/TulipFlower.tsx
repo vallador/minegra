@@ -219,13 +219,18 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
               exit={{ opacity: 0 }}
               className="flex flex-col items-center gap-0.5"
             >
-              <span className="text-[9px] text-pink-400/80 font-medium uppercase tracking-widest">
+              <span
+                className="text-[10px] text-white font-bold uppercase tracking-[0.15em]"
+                style={{
+                  textShadow: '1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 2px 4px rgba(0,0,0,0.5)'
+                }}
+              >
                 Abrir
               </span>
               <motion.div
-                className="w-1 h-1 bg-pink-300 rounded-full"
-                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-1.5 h-1.5 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                animate={{ scale: [1, 1.4, 1], opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
               />
             </motion.div>
           ) : isClosed && !canOpen ? (
