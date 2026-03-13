@@ -293,7 +293,7 @@ export const useGiftStore = create<GiftState>()(
     }),
     {
       name: 'gift-storage',
-      version: 4, // Incrementar a 4 para limpiar cache anterior
+      version: 5, // Forzar limpieza v5
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
         isAdmin: state.isAdmin,
