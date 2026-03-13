@@ -79,6 +79,7 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
         left: `calc(50% + ${pos.x}px)`,
         top: `calc(45% + ${pos.y}px)`, // Un poco más arriba del centro vertical para balancear
         transform: `translate(-50%, -50%)`,
+        zIndex: (showTimer || isOpen || isIncomplete) ? 50 : 10 + index,
       }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{
