@@ -35,7 +35,7 @@ export function FlowerLluvia({ onComplete }: FlowerLluviaProps) {
       </motion.div>
 
       {/* Escena de lluvia */}
-      <div 
+      <div
         className="relative w-full h-52 rounded-xl overflow-hidden mb-4"
         style={{
           background: 'linear-gradient(to bottom, #4a5568 0%, #718096 50%, #a0aec0 100%)',
@@ -129,7 +129,11 @@ export function FlowerLluvia({ onComplete }: FlowerLluviaProps) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setPhase(2)}
+              onClick={() => {
+                setPhase(2)
+                const audio = new Audio('/tercertulipan.ogg')
+                audio.play().catch(e => console.error("Error playing audio:", e))
+              }}
               className="px-6 py-2 bg-blue-100 text-blue-600 rounded-full text-sm"
             >
               💦 Entonces te mojo
@@ -143,15 +147,33 @@ export function FlowerLluvia({ onComplete }: FlowerLluviaProps) {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            <p className="text-gray-500 text-sm">
+            <div className="space-y-2 mb-6">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-gray-600 font-medium"
+              >
+                Esta vez no es una imagen.
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-pink-600 font-bold text-lg"
+                style={{ fontFamily: 'Georgia, serif' }}
+              >
+                Es tu podcast.
+              </motion.p>
+            </div>
+
+            <p className="text-gray-500 text-sm italic">
               Subieron a las cuerdas del parque...
             </p>
-            
-            {/* Silencio antes de la frase */}
+
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
+              transition={{ delay: 1.5 }}
               className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}
             >
               Yo lo recordé siempre. Tú decidiste cuándo.
@@ -162,12 +184,12 @@ export function FlowerLluvia({ onComplete }: FlowerLluviaProps) {
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={onComplete}
-                className="text-pink-400 text-sm"
+                className="bg-pink-100 text-pink-600 px-6 py-2 rounded-full text-sm font-bold shadow-sm mt-4"
               >
-                ✓
+                Cosechar Tulipán 🌷
               </motion.button>
             )}
           </motion.div>

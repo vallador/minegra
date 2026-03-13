@@ -134,9 +134,6 @@ export const useGiftStore = create<GiftState>()(
         // Bypass para admin
         if (state.isAdmin) return true
 
-        // Bloquear flor 3 específicamente si no es admin (solicitud del usuario)
-        if (id === 3 && !state.isAdmin) return false
-
         const now = Date.now()
         const unlockTime = START_TIME + (id - 1) * INTERVAL
         if (now < unlockTime) return false
