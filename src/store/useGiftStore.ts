@@ -7,6 +7,7 @@ export interface Flower {
   id: number
   title: string
   status: FlowerStatus
+  unlockTime?: number
 }
 
 interface GiftState {
@@ -77,12 +78,28 @@ export const useGiftStore = create<GiftState>()(
         console.log('Intentando login con:', pass) // Debug para el usuario en consola
         if (pass === 'bartolito') {
           console.log('Login exitoso como Negra')
-          // Restaurar flores desde el progreso persistido al loguear como usuario
-          const persisted = get().persistedFlowers
+
+          const now = Date.now()
+          const newFlowers = initialFlowers.map(f => {
+            // 1 al 3 ya cosechados (bloomed)
+            if (f.id <= 3) return { ...f, status: 'bloomed' as FlowerStatus }
+
+            // 4 y 5 habilitados (tiempo = ahora)
+            if (f.id === 4 || f.id === 5) return { ...f, unlockTime: now }
+
+            // 6: 2 horas, 7: 4 horas, 8: 5 horas
+            if (f.id === 6) return { ...f, unlockTime: now + 2 * 60 * 60 * 1000 }
+            if (f.id === 7) return { ...f, unlockTime: now + 4 * 60 * 60 * 1000 }
+            if (f.id === 8) return { ...f, unlockTime: now + 5 * 60 * 60 * 1000 }
+
+            return f
+          })
+
           set({
             isLoggedIn: true,
             isAdmin: false,
-            flowers: persisted.length > 0 ? persisted : initialFlowers
+            flowers: newFlowers,
+            persistedFlowers: newFlowers
           })
           return true
         }
@@ -123,8 +140,9 @@ export const useGiftStore = create<GiftState>()(
 
       getTimeUntilUnlock: (id: number) => {
         if (get().isAdmin) return 0
+        const flower = get().flowers.find(f => f.id === id)
         const now = Date.now()
-        const unlockTime = START_TIME + (id - 1) * INTERVAL
+        const unlockTime = flower?.unlockTime ?? (START_TIME + (id - 1) * INTERVAL)
         return Math.max(0, unlockTime - now)
       },
 
@@ -137,8 +155,9 @@ export const useGiftStore = create<GiftState>()(
         // Desbloqueo manual del tulipán 3 (solicitud del usuario)
         if (id === 3) return true
 
+        const flower = state.flowers.find(f => f.id === id)
         const now = Date.now()
-        const unlockTime = START_TIME + (id - 1) * INTERVAL
+        const unlockTime = flower?.unlockTime ?? (START_TIME + (id - 1) * INTERVAL)
         if (now < unlockTime) return false
 
         // La primera flor siempre se puede abrir si el tiempo pasó
