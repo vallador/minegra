@@ -61,6 +61,14 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
 
   return (
     <div className="p-6 text-center">
+      {/* Elemento de Audio - Único y siempre presente */}
+      <audio
+        ref={audioRef}
+        src="/primer tulipan audio.ogg"
+        onEnded={() => setIsPlaying(false)}
+        preload="auto"
+      />
+
       {/* Header con título */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -142,125 +150,132 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
               </motion.div>
             </div>
 
-            {/* Control de Audio Mejorado */}
-            <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
-              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-3 py-2 rounded-full border border-white/20 shadow-lg">
-                <input
-                  type="range" min="0" max="1" step="0.01" value={volume}
-                  onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                  className="w-16 h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-white hover:bg-white/50 transition-all outline-none"
-                />
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => toggleAudio()}
-                  className="w-8 h-8 flex items-center justify-center text-white"
-                >
+            {/* Control de Audio Discreto en Escena */}
+            <div className="absolute top-4 right-4 z-20">
+              <div className="flex items-center gap-2 bg-black/20 backdrop-blur-md px-2 py-1 rounded-full border border-white/10">
+                <motion.button onClick={() => toggleAudio()} className="w-6 h-6 flex items-center justify-center text-white">
                   {isPlaying ? (
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
                   ) : (
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 ml-1">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 ml-0.5"><path d="M8 5v14l11-7z" /></svg>
                   )}
                 </motion.button>
               </div>
             </div>
 
-            {/* Audio Element */}
-            <audio
-              ref={audioRef}
-              src="/primer tulipan audio.ogg"
-              onEnded={() => setIsPlaying(false)}
-            />
-
             <motion.div className="absolute top-3 left-0 right-0 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
-              <p className="text-white/90 text-xs font-medium drop-shadow-lg">Cancha de voleibol</p>
+              <p className="text-white/90 text-[10px] font-medium drop-shadow-lg">Cancha de voleibol</p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Texto minimalista e Interacción */}
+      {/* Texto e Interacción */}
       <div className="space-y-6">
         {phase === 0 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-12 px-4">
-            <div className="mb-10">
-              <span className="text-5xl animate-pulse">🎵</span>
-              <p className="text-pink-600 mt-6 text-lg font-medium" style={{ fontFamily: 'Georgia, serif' }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-6 px-4">
+            <div className="mb-8">
+              <span className="text-5xl animate-pulse inline-block mb-4">🎵</span>
+              <p className="text-pink-600 text-lg font-medium" style={{ fontFamily: 'Georgia, serif' }}>
                 Antes de comenzar...
               </p>
-              <p className="text-gray-500 text-sm mt-2 italic">
-                Dale al play arriba y usa la flecha para avanzar por la historia.
+              <p className="text-gray-500 text-sm mt-2">
+                Escucha lo que tengo que decirte
               </p>
+            </div>
+
+            {/* Reproductor Central Prominente */}
+            <div className="flex flex-col items-center gap-6 mb-12">
+              <motion.div
+                className="flex flex-col items-center gap-4 bg-pink-50 p-8 rounded-[40px] shadow-xl border-4 border-white relative overflow-hidden"
+                whileHover={{ scale: 1.02 }}
+              >
+                {/* Decorative wave element */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-pink-200 opacity-30" />
+
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => toggleAudio()}
+                  className="w-24 h-24 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-2xl shadow-pink-200 border-[6px] border-white z-10"
+                >
+                  {isPlaying ? (
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-12 h-12">
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-12 h-12 ml-2">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  )}
+                </motion.button>
+
+                <div className="w-full space-y-2 z-10">
+                  <div className="flex justify-between text-[10px] text-pink-400 font-bold uppercase tracking-widest">
+                    <span>Silencio</span>
+                    <span>Volumen</span>
+                  </div>
+                  <input
+                    type="range" min="0" max="1" step="0.01" value={volume}
+                    onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                    className="w-48 h-2 bg-pink-200 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                  />
+                </div>
+
+                {isPlaying && (
+                  <motion.div
+                    className="absolute top-2 left-0 right-0 flex justify-center gap-1"
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <div key={i} className="w-1 h-3 bg-pink-300 rounded-full" />
+                    ))}
+                  </motion.div>
+                )}
+              </motion.div>
+
+              {/* Hint arrow to start when playing */}
+              {isPlaying && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-pink-400 text-xs font-bold animate-bounce"
+                >
+                  ↓ ¡Avanza aquí abajo!
+                </motion.div>
+              )}
             </div>
 
             <div className="relative">
-              {!isPlaying && (
-                <div className="absolute -top-32 right-0 left-0 flex justify-center">
-                  <div className="bg-pink-100 text-pink-600 px-4 py-2 rounded-xl text-xs shadow-sm animate-bounce">
-                    ¡Casi se me olvida! Dale al play aquí arriba ↗️
-                  </div>
-                </div>
-              )}
-
               <motion.button
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.1, backgroundColor: '#db2777' }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setPhase(1)}
-                className="w-16 h-16 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-xl shadow-pink-200 border-4 border-white mx-auto text-3xl font-bold"
+                className="w-20 h-20 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-2xl shadow-pink-200 border-4 border-white mx-auto text-4xl font-bold transition-colors"
+                title="Siguiente"
               >
                 →
               </motion.button>
-              <p className="text-pink-400 text-xs mt-4 tracking-widest uppercase font-bold">
-                COMENZAR HISTORIA
+              <p className="text-pink-300 text-[10px] mt-4 tracking-[0.3em] uppercase font-black">
+                Comenzar historia
               </p>
-            </div>
-
-            {/* Audio element for Phase 0 (will be replaced by the one in phase > 0) */}
-            {/* This audio element is only here to allow the audio to be played before the main scene is rendered.
-                The audioRef will point to the one inside the phase > 0 block once it's mounted. */}
-            <audio ref={audioRef} src="/primer tulipan audio.ogg" onEnded={() => setIsPlaying(false)} style={{ display: 'none' }} />
-
-            {/* Control de Audio para Fase 0 (Fuera del container) */}
-            <div className="fixed top-20 right-10 z-50">
-              <div className="flex items-center gap-3 bg-pink-500 px-3 py-2 rounded-full border border-white shadow-lg text-white">
-                <motion.button onClick={() => toggleAudio()} className="w-8 h-8 flex items-center justify-center">
-                  {isPlaying ? (
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
-                  ) : (
-                    <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 ml-1"><path d="M8 5v14l11-7z" /></svg>
-                  )}
-                </motion.button>
-              </div>
             </div>
           </motion.div>
         )}
 
         {phase === 1 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-4"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
             <div className="space-y-1">
-              <p className="text-gray-700 text-lg tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-                5:20 pm.
-              </p>
-              <p className="text-gray-700 text-lg tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-                Cancha.
-              </p>
-              <p className="text-gray-700 text-lg tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-                Hasta que se iba la luz.
-              </p>
+              <p className="text-gray-700 text-lg tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>5:20 pm.</p>
+              <p className="text-gray-700 text-lg tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>Cancha.</p>
+              <p className="text-gray-700 text-lg tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>Hasta que se iba la luz.</p>
             </div>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setPhase(2)}
-              className="w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center shadow-md mx-auto text-2xl font-bold"
+              className="w-14 h-14 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center shadow-md mx-auto text-3xl font-bold"
             >
               →
             </motion.button>
@@ -268,38 +283,24 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
         )}
 
         {phase === 2 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-4"
-          >
-            {/* Escena comiendo juntos */}
-            <div
-              className="w-full h-32 rounded-xl flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, #2d2d44, #1a1a2e)',
-              }}
-            >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+            <div className="w-full h-32 rounded-xl flex items-center justify-center shadow-inner" style={{ background: 'linear-gradient(135deg, #2d2d44, #1a1a2e)' }}>
               <div className="flex items-center gap-4">
                 <span className="text-3xl">🥐</span>
                 <div className="flex flex-col items-center">
                   <div className="flex gap-1">
                     <div className="w-4 h-4 rounded-full bg-pink-200" /><div className="w-4 h-4 rounded-full bg-amber-200" />
                   </div>
-                  <p className="text-white/60 text-xs mt-1">en la oscuridad</p>
+                  <p className="text-white/60 text-[10px] mt-1">en la oscuridad</p>
                 </div>
               </div>
             </div>
-
-            <p className="text-gray-500 text-sm italic">
-              Comiendo en la cancha, mirando las estrellas.
-            </p>
-
+            <p className="text-gray-500 text-sm italic">Comiendo en la cancha, mirando las estrellas.</p>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setPhase(3)}
-              className="w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center shadow-md mx-auto text-2xl font-bold"
+              className="w-14 h-14 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center shadow-md mx-auto text-3xl font-bold"
             >
               →
             </motion.button>
@@ -307,61 +308,29 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
         )}
 
         {phase === 3 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="space-y-4"
-          >
-            {/* Caminando hacia la estación */}
-            <div
-              className="w-full h-32 rounded-xl overflow-hidden"
-              style={{
-                background: 'linear-gradient(to bottom, #4a5568, #2d3748)',
-              }}
-            >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+            <div className="w-full h-32 rounded-xl overflow-hidden shadow-inner" style={{ background: 'linear-gradient(to bottom, #4a5568, #2d3748)' }}>
               <div className="h-full flex items-end justify-center pb-4">
                 <div className="flex gap-2">
-                  <motion.div
-                    animate={{ x: [-2, 2, -2] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="flex flex-col items-center"
-                  >
+                  <motion.div animate={{ x: [-2, 2, -2] }} transition={{ duration: 2, repeat: Infinity }} className="flex flex-col items-center">
                     <div className="w-5 h-5 rounded-full bg-pink-200" /><div className="w-4 h-6 rounded-t bg-gray-400" />
                   </motion.div>
-                  <motion.div
-                    animate={{ x: [2, -2, 2] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-                    className="flex flex-col items-center"
-                  >
+                  <motion.div animate={{ x: [2, -2, 2] }} transition={{ duration: 2, repeat: Infinity, delay: 0.3 }} className="flex flex-col items-center">
                     <div className="w-5 h-5 rounded-full bg-amber-200" /><div className="w-4 h-6 rounded-t bg-blue-500" />
                   </motion.div>
                 </div>
               </div>
             </div>
-
-            <p className="text-gray-500 text-sm italic">
-              Caminando hacia la estación.
-            </p>
-
-            {/* Silencio antes de la frase final */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-              className="pt-4"
-            >
-              <p className="text-pink-600 font-medium" style={{ fontFamily: 'Georgia, serif' }}>
-                Elegí el hábito de estar.
-              </p>
+            <p className="text-gray-500 text-sm italic">Caminando hacia la estación.</p>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }} className="pt-4">
+              <p className="text-pink-600 font-medium" style={{ fontFamily: 'Georgia, serif' }}>Elegí el hábito de estar.</p>
             </motion.div>
-
-            {/* Botón después del silencio */}
             {showButton && (
               <motion.button
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                 whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => { toggleAudio(false); onComplete(); }}
-                className="w-14 h-14 bg-green-500 text-white rounded-full flex items-center justify-center shadow-xl mx-auto text-2xl"
+                className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center shadow-xl mx-auto text-3xl"
               >
                 ✓
               </motion.button>
