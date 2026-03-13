@@ -16,6 +16,7 @@ interface GiftState {
 
   // Flores
   flowers: Flower[]
+  persistedFlowers: Flower[]
   currentFlower: number | null
 
   // Estados finales
@@ -64,6 +65,7 @@ export const useGiftStore = create<GiftState>()(
       isLoggedIn: false,
       isAdmin: false,
       flowers: initialFlowers,
+      persistedFlowers: initialFlowers,
       currentFlower: null,
       showTrivia: false,
       showLetter: false,
@@ -75,11 +77,19 @@ export const useGiftStore = create<GiftState>()(
         console.log('Intentando login con:', pass) // Debug para el usuario en consola
         if (pass === 'bartolito') {
           console.log('Login exitoso como Negra')
-          set({ isLoggedIn: true, isAdmin: false })
+          // Restaurar flores desde el progreso persistido al loguear como usuario
+          const persisted = get().persistedFlowers
+          set({
+            isLoggedIn: true,
+            isAdmin: false,
+            flowers: persisted.length > 0 ? persisted : initialFlowers
+          })
           return true
         }
         if (pass === 'adminnegra') {
           console.log('Login exitoso como Admin')
+          // Admin inicia con el estado actual de las flores para probar, 
+          // pero sus acciones no se guardarán en persistedFlowers
           set({ isLoggedIn: true, isAdmin: true })
           return true
         }
@@ -88,12 +98,21 @@ export const useGiftStore = create<GiftState>()(
       },
 
       logout: () => {
-        set({ isLoggedIn: false, isAdmin: false })
+        // Al cerrar sesión, nos aseguramos de que el estado real (persisted) sea el que quede
+        // por si el admin estuvo jugueteando.
+        const persisted = get().persistedFlowers
+        set({
+          isLoggedIn: false,
+          isAdmin: false,
+          flowers: persisted.length > 0 ? persisted : initialFlowers,
+          currentFlower: null
+        })
       },
 
       resetProgress: () => {
         set({
           flowers: initialFlowers,
+          persistedFlowers: initialFlowers,
           currentFlower: null,
           showTrivia: false,
           showLetter: false,
@@ -142,21 +161,29 @@ export const useGiftStore = create<GiftState>()(
 
         // La flor 8 es especial - mensaje de futuro e "intriga"
         if (id === 8) {
-          set(state => ({
-            flowers: state.flowers.map(f =>
+          set(state => {
+            const newFlowers = state.flowers.map(f =>
               f.id === id ? { ...f, status: 'incomplete' as FlowerStatus } : f
-            ),
-            currentFlower: id
-          }))
+            )
+            return {
+              flowers: newFlowers,
+              persistedFlowers: state.isAdmin ? state.persistedFlowers : newFlowers,
+              currentFlower: id
+            }
+          })
           return
         }
 
-        set(state => ({
-          flowers: state.flowers.map(f =>
+        set(state => {
+          const newFlowers = state.flowers.map(f =>
             f.id === id ? { ...f, status: 'open' as FlowerStatus } : f
-          ),
-          currentFlower: id
-        }))
+          )
+          return {
+            flowers: newFlowers,
+            persistedFlowers: state.isAdmin ? state.persistedFlowers : newFlowers,
+            currentFlower: id
+          }
+        })
       },
 
       closeFlower: () => {
@@ -176,6 +203,7 @@ export const useGiftStore = create<GiftState>()(
 
           return {
             flowers: newFlowers,
+            persistedFlowers: state.isAdmin ? state.persistedFlowers : newFlowers,
             currentFlower: null,
             showTrivia: allComplete
           }
@@ -183,20 +211,28 @@ export const useGiftStore = create<GiftState>()(
       },
 
       witherAllFlowers: () => {
-        set(state => ({
-          flowers: state.flowers.map(f =>
+        set(state => {
+          const newFlowers = state.flowers.map(f =>
             f.status === 'bloomed' ? { ...f, status: 'withered' as FlowerStatus } : f
           )
-        }))
+          return {
+            flowers: newFlowers,
+            persistedFlowers: state.isAdmin ? state.persistedFlowers : newFlowers
+          }
+        })
       },
 
       markIncomplete: (id: number) => {
-        set(state => ({
-          flowers: state.flowers.map(f =>
+        set(state => {
+          const newFlowers = state.flowers.map(f =>
             f.id === id ? { ...f, status: 'incomplete' as FlowerStatus } : f
-          ),
-          currentFlower: null
-        }))
+          )
+          return {
+            flowers: newFlowers,
+            persistedFlowers: state.isAdmin ? state.persistedFlowers : newFlowers,
+            currentFlower: null
+          }
+        })
       },
 
       completeTrivia: () => {
@@ -226,7 +262,24 @@ export const useGiftStore = create<GiftState>()(
     }),
     {
       name: 'gift-storage',
-      version: 2, // Incrementar para forzar limpieza de estados antiguos
+      version: 3, // Incrementar
+      partialize: (state) => ({
+        isLoggedIn: state.isLoggedIn,
+        isAdmin: state.isAdmin,
+        persistedFlowers: state.persistedFlowers,
+        showTrivia: state.showTrivia,
+        showLetter: state.showLetter,
+        showBlackScreen: state.showBlackScreen,
+        triviaCompleted: state.triviaCompleted
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Al cargar el storage, sincronizar flowers con persistedFlowers
+          state.flowers = state.persistedFlowers.length > 0
+            ? state.persistedFlowers
+            : initialFlowers
+        }
+      }
     }
   )
 )
