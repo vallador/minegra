@@ -287,18 +287,34 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
         )}
 
         {phase === 5 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 py-12">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 py-6">
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="text-6xl mb-4"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="relative w-full max-w-sm mx-auto rounded-3xl overflow-hidden shadow-2xl border-4 border-white"
             >
-              ❤️
+              <img src="/ilustracion.png" alt="Ilustración" className="w-full h-auto" />
+              <div className="absolute top-4 right-4 text-4xl animate-bounce">
+                ❤️
+              </div>
             </motion.div>
-            <p className="text-pink-600 font-medium text-2xl" style={{ fontFamily: 'Georgia, serif' }}>
-              Elegí el hábito de estar.
-            </p>
-            <p className="text-gray-400 text-xs italic mt-8">
+
+            <div className="space-y-4 pt-4">
+              <p className="text-pink-600 font-medium text-2xl" style={{ fontFamily: 'Georgia, serif' }}>
+                Elegí el hábito de estar.
+              </p>
+
+              <div className="space-y-2">
+                <p className="text-gray-600 text-sm italic">
+                  Algunas historias empiezan con una rutina.
+                </p>
+                <p className="text-gray-700 font-medium">
+                  La nuestra empezó muchas veces a las 5:20.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-gray-400 text-[10px] italic mt-12 bg-gray-50 py-2 rounded-full">
               Puedes cerrar esta historia arriba a la derecha.
             </p>
           </motion.div>
