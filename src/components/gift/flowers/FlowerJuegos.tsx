@@ -23,9 +23,9 @@ const TRIVIA_QUESTIONS: TriviaQuestion[] = [
     correctIndex: 1
   },
   {
-    question: "¿Qué nombre tiene el perrito de la libreta?",
-    options: ["Rony", "Firu", "Bobby"],
-    correctIndex: 0
+    question: "¿Quién dibujó la obra maestra en tu libreta?",
+    options: ["Miguel Angel", "Deivid Angelo", "Kung Fu Panda"],
+    correctIndex: 1
   },
   {
     question: "¿Dónde ganamos el premio de los globos?",
@@ -38,9 +38,14 @@ const TRIVIA_QUESTIONS: TriviaQuestion[] = [
     correctIndex: 1
   },
   {
-    question: "¿Cómo hacíamos que corríamos en el mall?",
+    question: "¿Cómo hacíamos que corríamos en el centro comercial?",
     options: ["Como ninjas", "Como pingüinos", "Como atletas"],
     correctIndex: 1
+  },
+  {
+    question: "¿Quién se compró una máscara de murciélaga (gatubela) jaja?",
+    options: ["Valentina", "Valentina", "Valentina"],
+    correctIndex: 0 // Cualquiera es correcta, pero el store espera un index
   },
 ]
 
@@ -65,8 +70,11 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
   // Game 5: Penguins Obstacles
   const [penguinPos, setPenguinPos] = useState(0)
   const [obstacles, setObstacles] = useState<{ id: number; x: number; y: number }[]>([])
-  const obstacleInterval = useRef<NodeJS.Timeout | null>(null)
-  const collisionInterval = useRef<NodeJS.Timeout | null>(null)
+  const obstacleInterval = useRef<any>(null)
+  const collisionInterval = useRef<any>(null)
+
+  // Game 6: Halloween Bat
+  const [batCatches, setBatCatches] = useState(0)
 
   const handleNextPhase = () => {
     if (phase === 'intro') {
@@ -76,7 +84,7 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
       setSubPhase(0)
       if (currentGameIndex === 4) startPenguinGame()
     } else if (phase === 'game') {
-      if (currentGameIndex < 4) {
+      if (currentGameIndex < 5) {
         setCurrentGameIndex(prev => prev + 1)
         setPhase('trivia')
         setTriviaState('selecting')
@@ -127,7 +135,8 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
   }, [])
 
   const handleTriviaAnswer = (index: number) => {
-    if (index === TRIVIA_QUESTIONS[currentGameIndex].correctIndex) {
+    // Para la pregunta 6 (index 5), todas son correctas
+    if (currentGameIndex === 5 || index === TRIVIA_QUESTIONS[currentGameIndex].correctIndex) {
       setTriviaState('correct')
       setTimeout(handleNextPhase, 1500)
     } else {
@@ -204,9 +213,7 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
                   onClick={() => handleTriviaAnswer(i)}
                   className={`w-full p-4 rounded-2xl font-bold text-left transition-all border-b-4 ${triviaState === 'selecting'
                     ? 'bg-white border-gray-200 text-gray-700 hover:border-pink-300'
-                    : i === TRIVIA_QUESTIONS[currentGameIndex].correctIndex
-                      ? 'bg-green-500 border-green-700 text-white'
-                      : 'bg-white border-gray-200 opacity-50 text-gray-400'
+                    : 'bg-green-500 border-green-700 text-white'
                     }`}
                 >
                   {opt}
@@ -281,9 +288,13 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
                     <motion.div whileTap={{ rotateY: 180 }} onClick={() => setSubPhase(1)} className="text-8xl cursor-pointer">📓</motion.div>
                   ) : (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center gap-4">
-                      <div className="w-32 h-32 rounded-xl overflow-hidden shadow-xl border-4 border-white rotate-3">
+                      <motion.div
+                        whileHover={{ scale: 1.8, zIndex: 50, rotate: 0 }}
+                        whileTap={{ scale: 1.6 }}
+                        className="w-32 h-32 rounded-xl overflow-hidden shadow-2xl border-4 border-white rotate-3 cursor-zoom-in transition-shadow"
+                      >
                         <img src="/libreta.jpeg" className="w-full h-full object-cover" />
-                      </div>
+                      </motion.div>
                       <p className="text-gray-500 font-medium italic">"tu y tu poesía"</p>
                     </motion.div>
                   )}
@@ -301,10 +312,14 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
                     <motion.div key={i} animate={{ y: [0, -20, 0] }} transition={{ repeat: Infinity, duration: 2 + i }} onClick={() => setPoppedBalloons([...poppedBalloons, i])} className={`text-4xl cursor-pointer ${poppedBalloons.includes(i) ? 'opacity-0 scale-0 pointer-events-none' : ''}`}>🎈</motion.div>
                   )) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-white/20 backdrop-blur-sm">
-                      <div className="w-32 h-32 rounded-xl overflow-hidden shadow-xl border-4 border-white -rotate-3">
+                      <motion.div
+                        whileHover={{ scale: 1.8, zIndex: 50, rotate: 0 }}
+                        whileTap={{ scale: 1.6 }}
+                        className="w-32 h-32 rounded-xl overflow-hidden shadow-2xl border-4 border-white -rotate-3 cursor-zoom-in transition-shadow"
+                      >
                         <img src="/mundoaventura.jpg" className="w-full h-full object-cover" />
-                      </div>
-                      <p className="text-yellow-600 font-black text-xs text-center px-4">"te has ganado un hijo murciélago BATI"</p>
+                      </motion.div>
+                      <p className="text-yellow-600 font-black text-[10px] text-center px-4 leading-tight">"te has ganado un hijo murciélago BATI"</p>
                       <button onClick={handleNextPhase} className="bg-pink-500 text-white px-6 py-2 rounded-full font-bold">Siguiente →</button>
                     </div>
                   )}
@@ -357,37 +372,126 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
             {/* GAME 5: PENGUINS */}
             {currentGameIndex === 4 && (
               <div className="space-y-4 w-full h-[350px] flex flex-col items-center">
-                <p className="text-pink-500 font-bold">🐧 Nivel Final: Mall</p>
-                <div className="flex-1 w-full bg-sky-50 relative rounded-2xl overflow-hidden flex flex-col items-center">
-                  {/* Obstaculos */}
-                  {obstacles.map(o => (
-                    <motion.span
-                      key={o.id}
-                      style={{ x: o.x, y: o.y, position: 'absolute' }}
-                      className="text-2xl"
-                    >
-                      📦
-                    </motion.span>
-                  ))}
+                <p className="text-pink-500 font-bold">🐧 Nivel Final: Centro Comercial</p>
 
-                  <div className="absolute bottom-10 flex flex-col items-center">
-                    <motion.div
-                      animate={{ x: penguinPos * 40 - 100 }}
-                      onClick={() => {
-                        if (penguinPos < 5) setPenguinPos(p => p + 1)
-                      }}
-                      className="text-7xl cursor-pointer drop-shadow-md"
-                    >
-                      🐧
-                    </motion.div>
-                    {penguinPos === 0 && <span className="text-[10px] text-gray-400 font-bold animate-pulse mt-2">TOCA EL PINGÜINO PARA AVANZAR</span>}
-                    {penguinPos > 0 && penguinPos < 5 && <div className="h-1 w-24 bg-gray-200 rounded-full mt-2"><div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${penguinPos * 20}%` }} /></div>}
+                {subPhase === 0 ? (
+                  <div className="flex-1 w-full flex flex-col items-center">
+                    <div className="flex-1 w-full bg-sky-50 relative rounded-2xl overflow-hidden flex flex-col items-center border border-sky-100">
+                      {/* Obstaculos */}
+                      {obstacles.map(o => (
+                        <motion.span
+                          key={o.id}
+                          style={{ x: o.x, y: o.y, position: 'absolute' }}
+                          className="text-2xl"
+                        >
+                          📦
+                        </motion.span>
+                      ))}
+
+                      <div className="absolute bottom-10 flex flex-col items-center">
+                        <motion.div
+                          animate={{ x: penguinPos * 40 - 100 }}
+                          onClick={() => {
+                            if (penguinPos < 5) setPenguinPos(p => p + 1)
+                          }}
+                          className="text-7xl cursor-pointer drop-shadow-md"
+                        >
+                          🐧
+                        </motion.div>
+                        {penguinPos === 0 && <span className="text-[10px] text-gray-400 font-bold animate-pulse mt-2">TOCA EL PINGÜINO PARA AVANZAR</span>}
+                        {penguinPos > 0 && penguinPos < 5 && <div className="h-1 w-24 bg-gray-200 rounded-full mt-2"><div className="h-full bg-blue-400 rounded-full transition-all" style={{ width: `${penguinPos * 20}%` }} /></div>}
+                      </div>
+
+                      <div className="absolute top-2 right-4 text-[10px] font-black text-blue-200 uppercase tracking-tighter">Esquiva las cajas</div>
+                    </div>
+                    {penguinPos >= 5 && (
+                      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex flex-col items-center mt-2">
+                        <p className="text-pink-600 font-bold text-center text-xs">"confirmado… corríamos como pingüinos"</p>
+                        <button onClick={() => setSubPhase(1)} className="bg-pink-500 text-white px-8 py-2 rounded-full font-bold shadow-lg mt-2 animate-bounce">
+                          Continuar →
+                        </button>
+                      </motion.div>
+                    )}
                   </div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex-1 flex flex-col items-center justify-center gap-4"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.8, zIndex: 50, rotate: 0 }}
+                      whileTap={{ scale: 1.6 }}
+                      className="w-40 h-40 rounded-xl overflow-hidden shadow-2xl border-4 border-white cursor-zoom-in transition-shadow"
+                    >
+                      <img src="/fotodeseñora.jpg" className="w-full h-full object-cover" />
+                    </motion.div>
+                    <p className="text-gray-500 font-black italic tracking-widest uppercase text-xs">"tu foto dee señora"</p>
+                    <button
+                      onClick={handleNextPhase}
+                      className="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-10 py-3 rounded-full font-black shadow-xl mt-4"
+                    >
+                      Próximo Recuerdo ✨
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            )}
 
-                  <div className="absolute top-2 right-4 text-[10px] font-black text-blue-200">ESQUIVA LAS CAJAS</div>
-                </div>
-                {penguinPos >= 5 && <p className="text-pink-600 font-bold animate-bounce mt-2 text-center text-xs">"confirmado… corríamos como pingüinos"</p>}
-                {penguinPos >= 5 && <button onClick={handleNextPhase} className="bg-pink-500 text-white px-10 py-3 rounded-full font-black shadow-xl mt-2">Finalizar Historias ✨</button>}
+            {/* GAME 6: BAT CATCH */}
+            {currentGameIndex === 5 && (
+              <div className="space-y-4 w-full h-[350px] flex flex-col items-center">
+                <p className="text-purple-600 font-black tracking-widest uppercase">🦇 Nivel: Halloween</p>
+
+                {subPhase === 0 ? (
+                  <div className="flex-1 w-full bg-slate-900 relative rounded-2xl overflow-hidden border-2 border-purple-500/30">
+                    <div className="absolute top-2 left-4 text-[10px] text-purple-400 font-bold uppercase">Atrapa al murciélago (3 veces)</div>
+                    <motion.div
+                      key={batCatches}
+                      initial={{
+                        x: Math.random() * 200 - 100,
+                        y: Math.random() * 200 - 100,
+                        scale: 0.5,
+                        opacity: 0
+                      }}
+                      animate={{
+                        x: [Math.random() * 150, Math.random() * -150, Math.random() * 150],
+                        y: [Math.random() * 150, Math.random() * -150, Math.random() * 150],
+                        scale: 1,
+                        opacity: 1
+                      }}
+                      transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse' }}
+                      onClick={() => {
+                        if (batCatches < 2) setBatCatches(prev => prev + 1)
+                        else setSubPhase(1)
+                      }}
+                      className="absolute text-5xl cursor-pointer left-1/2 top-1/2 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+                    >
+                      🦇
+                    </motion.div>
+                  </div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex-1 flex flex-col items-center justify-center gap-4"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.8, zIndex: 50 }}
+                      whileTap={{ scale: 1.6 }}
+                      className="w-44 h-44 rounded-2xl overflow-hidden shadow-2xl border-4 border-purple-400 cursor-zoom-in"
+                    >
+                      <img src="/batycat.png" className="w-full h-full object-cover" />
+                    </motion.div>
+                    <p className="text-purple-600 font-black italic tracking-widest text-lg">"nosotros siempre.."</p>
+                    <button
+                      onClick={handleNextPhase}
+                      className="bg-purple-600 text-white px-12 py-3 rounded-full font-black shadow-xl shadow-purple-200 mt-2"
+                    >
+                      Finalizar Historias ✨
+                    </button>
+                  </motion.div>
+                )}
               </div>
             )}
           </motion.div>
@@ -401,8 +505,8 @@ export function FlowerJuegos({ onComplete }: FlowerJuegosProps) {
             className="space-y-10 py-6"
           >
             <Trophy size={80} className="text-yellow-400 mx-auto" />
-            <div className="flex justify-center gap-4 text-4xl">
-              {['📦', '🐔', '📓', '🎈', '🐧'].map((e, i) => (
+            <div className="flex flex-wrap justify-center gap-4 text-4xl px-4">
+              {['📦', '🐔', '📓', '🎈', '🐧', '🦇'].map((e, i) => (
                 <motion.span key={i} animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, delay: i * 0.2 }}>{e}</motion.span>
               ))}
             </div>
