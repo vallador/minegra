@@ -383,8 +383,8 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
                   >
                     <p className="text-[10px] text-gray-800 italic font-medium leading-tight">
                       {focusSection === 1
-                        ? "siempre me ha gustado como tomas fotos es una culidad muy interesante tuya"
-                        : "me encanto jugar a las luchitas contigo, me encantó perseguirte por el bosque"
+                        ? "Siempre me ha gustado cómo miras el mundo cuando tomas fotos."
+                        : "Entre luchitas y carreras por el bosque… nunca había forma de ganar limpio contigo, quiás un beso faltaba"
                       }
                     </p>
                   </motion.div>
