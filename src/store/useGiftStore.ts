@@ -87,10 +87,10 @@ export const useGiftStore = create<GiftState>()(
             // 4 y 5 habilitados (tiempo = ahora)
             if (f.id === 4 || f.id === 5) return { ...f, unlockTime: now }
 
-            // 6: 2 horas, 7: 4 horas, 8: 5 horas
+            // 6: 2 horas, 7: 1 hora, 8: 1.5 horas
             if (f.id === 6) return { ...f, unlockTime: now + 2 * 60 * 60 * 1000 }
-            if (f.id === 7) return { ...f, unlockTime: now + 4 * 60 * 60 * 1000 }
-            if (f.id === 8) return { ...f, unlockTime: now + 5 * 60 * 60 * 1000 }
+            if (f.id === 7) return { ...f, unlockTime: now + 1 * 60 * 60 * 1000 }
+            if (f.id === 8) return { ...f, unlockTime: now + 1.5 * 60 * 60 * 1000 }
 
             return f
           })
