@@ -1,148 +1,130 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { Heart } from 'lucide-react'
 
 interface FlowerTuProps {
   onComplete: () => void
 }
 
 export function FlowerTu({ onComplete }: FlowerTuProps) {
-  const [selectedItems, setSelectedItems] = useState<number[]>([])
-  const [showFinal, setShowFinal] = useState(false)
   const [showButton, setShowButton] = useState(false)
+  const [particles, setParticles] = useState<{ id: number; x: number; color: string; delay: number }[]>([])
 
-  const items = [
-    { id: 1, emoji: '👨‍👩‍👧', text: 'Familia en USA' },
-    { id: 2, emoji: '👧', text: 'Hermana' },
-    { id: 3, emoji: '💜', text: 'Kate' },
-    { id: 4, emoji: '🏀', text: 'Basket' },
-    { id: 5, emoji: '🐱', text: 'Gatos' },
-    { id: 6, emoji: '🐾', text: 'Animales' },
-    { id: 7, emoji: '🏠', text: 'Casa' },
-    { id: 8, emoji: '🍜', text: 'Comida' },
-    { id: 9, emoji: '📺', text: 'Tele' },
+  const paragraphs = [
+    "Más allá de todo lo que sueñas…\nhay algo en ti que siempre me ha dejado sin palabras:",
+    "La manera en que estás presente,\ncomo si el mundo se detuviera para que los que amas se sientan cuidados.",
+    "La forma en que ríes, incluso cuando todo a tu alrededor parece desmoronarse,\ncomo si tu alegría pudiera abrazar cualquier tormenta.",
+    "Algunas personas dejan una marca pequeña.\nTú… dejas huellas que el tiempo no puede borrar.",
+    "Y quiero que sientas esto en lo más profundo:",
+    "en algún momento estarás junto a Génesis, tu mamá y tu papá,\ny ese día, cada risa, cada abrazo, cada instante…\nserá exactamente como debe ser.",
+    "Eso no es un deseo, es una certeza que nace de algo que va más allá de mí."
   ]
 
-  const toggleItem = (id: number) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter(i => i !== id))
-    } else {
-      const newSelected = [...selectedItems, id]
-      setSelectedItems(newSelected)
-      if (newSelected.length >= 6 && !showFinal) {
-        setTimeout(() => setShowFinal(true), 500)
-      }
-    }
+  useEffect(() => {
+    // Mostrar botón después de que todos los párrafos se hayan revelado
+    const totalTime = paragraphs.length * 2500 + 1000
+    const timer = setTimeout(() => setShowButton(true), totalTime)
+    return () => clearTimeout(timer)
+  }, [])
+
+  const handleHarvest = () => {
+    const newParticles = Array.from({ length: 40 }).map((_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      color: ['#F472B6', '#EC4899', '#FB7185', '#FFF1F2'][Math.floor(Math.random() * 4)],
+      delay: Math.random() * 2
+    }))
+    setParticles(newParticles)
+    setTimeout(onComplete, 3000)
   }
 
-  useEffect(() => {
-    if (showFinal) {
-      // Silencio de 2 segundos antes de mostrar el botón
-      const timer = setTimeout(() => setShowButton(true), 2500)
-      return () => clearTimeout(timer)
-    }
-  }, [showFinal])
-
   return (
-    <div className="p-6 text-center">
+    <div className="relative p-6 text-center min-h-[600px] flex flex-col items-center justify-start bg-white rounded-3xl overflow-y-auto custom-scrollbar shadow-inner border border-pink-50">
+
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-100 via-purple-100 to-pink-100" />
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-4"
+        className="mb-8 mt-4 shrink-0"
       >
         <span className="text-3xl">✨</span>
         <h2 className="text-xl font-light text-pink-600 mt-2" style={{ fontFamily: 'Georgia, serif' }}>
-          Su vida
+          Más allá de todo
         </h2>
         <div className="w-16 h-0.5 bg-pink-300 mx-auto mt-3" />
       </motion.div>
 
-      {/* Grid de aspectos */}
-      {!showFinal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mb-4"
-        >
-          <div className="grid grid-cols-3 gap-2">
-            {items.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.05 * index }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => toggleItem(item.id)}
-                className={`p-3 rounded-xl cursor-pointer transition-all ${
-                  selectedItems.includes(item.id) 
-                    ? 'bg-pink-200' 
-                    : 'bg-pink-50'
-                }`}
-              >
-                <span className="text-xl">{item.emoji}</span>
-                {selectedItems.includes(item.id) && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 w-3 h-3 bg-pink-500 rounded-full flex items-center justify-center"
-                  >
-                    <span className="text-white text-xs">✓</span>
-                  </motion.div>
-                )}
-              </motion.div>
-            ))}
-          </div>
+      {/* Ilustración Placeholder (A la espera de la imagen del usuario) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.5 }}
+        className="w-full aspect-[4/3] bg-pink-50 rounded-2xl flex items-center justify-center mb-8 border-2 border-dashed border-pink-200 shrink-0 overflow-hidden relative"
+      >
+        {/* Usaremos una imagen temporal o un placeholder bonito */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+          <Heart className="text-pink-200 mb-2" size={48} />
+          <p className="text-pink-300 text-xs italic">Cargando ilustración...</p>
+        </div>
+        {/* Cuando el usuario pase la imagen, se reemplazará este div por un <img /> */}
+      </motion.div>
 
-          <p className="text-pink-400 text-xs mt-3">
-            {selectedItems.length}/6 para continuar
-          </p>
-        </motion.div>
-      )}
-
-      {/* Mensaje final */}
-      {showFinal && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4"
-        >
-          {/* Emoji de ella feliz */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center"
-          >
-            <span className="text-2xl">😊</span>
-          </motion.div>
-
-          {/* Silencio antes de la frase */}
+      {/* Carta */}
+      <div className="w-full space-y-8 pb-12 z-10 shrink-0">
+        {paragraphs.map((text, idx) => (
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="text-pink-600" style={{ fontFamily: 'Georgia, serif' }}
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 + idx * 2.5, duration: 1.2 }}
+            className={`text-gray-700 font-serif text-lg leading-relaxed whitespace-pre-line ${idx === paragraphs.length - 1 ? 'font-black text-pink-600 text-xl' : 'font-medium'
+              }`}
           >
-            Una vida grande. Yo solo fui una parte.
+            {text}
           </motion.p>
+        ))}
+      </div>
 
-          {/* Botón después del silencio */}
-          {showButton && (
+      <AnimatePresence>
+        {showButton && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 pb-10 z-20 shrink-0"
+          >
             <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onComplete}
-              className="text-pink-400 text-sm"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleHarvest}
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-10 py-4 rounded-full font-black text-lg shadow-xl shadow-pink-200"
             >
-              ✓
+              Cosechar Tulipán 7 ✨🌷
             </motion.button>
-          )}
-        </motion.div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Confetti particles */}
+      {particles.map(p => (
+        <motion.div
+          key={p.id}
+          initial={{ top: '100%', left: `${p.x}%`, scale: 1 }}
+          animate={{
+            top: '-10%',
+            left: `${p.x + (Math.random() * 20 - 10)}%`,
+            rotate: 360,
+            scale: 0
+          }}
+          transition={{ duration: 2 + Math.random(), delay: p.delay, ease: 'easeOut' }}
+          className="absolute w-3 h-3 rounded-full z-50 pointer-events-none"
+          style={{ backgroundColor: p.color }}
+        />
+      ))}
     </div>
   )
 }
