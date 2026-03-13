@@ -1,233 +1,243 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 interface FlowerHogarProps {
   onComplete: () => void
 }
 
 export function FlowerHogar({ onComplete }: FlowerHogarProps) {
+  const [phase, setPhase] = useState<'playing' | 'solved'>('playing')
   const [inputWord, setInputWord] = useState('')
-  const [isCorrect, setIsCorrect] = useState(false)
   const [showError, setShowError] = useState(false)
-  const [carouselIndex, setCarouselIndex] = useState(0)
-  const [showButton, setShowButton] = useState(false)
+  const [lightIndex, setLightIndex] = useState(-1)
+  const [isSequenceRunning, setIsSequenceRunning] = useState(true)
 
-  const secretWord = 'HOGAR'
-  const displayWord = '_ _ G _ R'
+  const audioRef1 = useRef<HTMLAudioElement | null>(null)
+  const audioRef2 = useRef<HTMLAudioElement | null>(null)
 
-  const checkWord = () => {
-    if (inputWord.toUpperCase() === secretWord) {
-      setIsCorrect(true)
+  const targetPhrase = 'LUCES RISAS COMIDA Y STRANGER THINGS SIEMPRE CONTIGO'
+  // El usuario pidió: “Luces, risas comida y Stranger Things… siempre contigo"
+  // Validaremos de forma flexible (sin distinguir mayúsculas/minúsculas ni caracteres especiales como coma/puntos)
+
+  const alphabetRows = [
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+    ['I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'],
+    ['R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+  ]
+
+  // Convertir frase a secuencia de índices de letras (o -1 para espacios/pausas)
+  const sequence = targetPhrase.split('').map(char => {
+    if (char === ' ') return -1
+    const letter = char.toUpperCase()
+    for (let r = 0; r < alphabetRows.length; r++) {
+      for (let c = 0; c < alphabetRows[r].length; c++) {
+        if (alphabetRows[r][c] === letter) return { r, c, char: letter }
+      }
+    }
+    return -1
+  })
+
+  useEffect(() => {
+    // Iniciar audio 1
+    if (audioRef1.current) {
+      audioRef1.current.volume = 0.5
+      audioRef1.current.play().catch(e => console.log("Audio play blocked:", e))
+    }
+
+    return () => {
+      if (audioRef1.current) audioRef1.current.pause()
+      if (audioRef2.current) audioRef2.current.pause()
+    }
+  }, [])
+
+  useEffect(() => {
+    let timer: any
+    if (isSequenceRunning && phase === 'playing') {
+      const step = () => {
+        setLightIndex(prev => {
+          if (prev >= sequence.length - 1) return 0
+          return prev + 1
+        })
+        const nextChar = sequence[(lightIndex + 1) % sequence.length]
+        const delay = nextChar === -1 ? 400 : 600 // Velocidad rápida como se solicitó
+        timer = setTimeout(step, delay)
+      }
+      timer = setTimeout(step, 600)
+    }
+    return () => clearTimeout(timer)
+  }, [isSequenceRunning, phase, lightIndex])
+
+  const checkPhrase = () => {
+    const normalizedInput = inputWord.toLowerCase().replace(/[.,…]/g, '').trim()
+    const normalizedTarget = targetPhrase.toLowerCase()
+
+    // Comprobamos si contiene las palabras clave principales por si hay errores de puntuación
+    if (normalizedInput === normalizedTarget ||
+      (normalizedInput.includes('luces') && normalizedInput.includes('risas') &&
+        normalizedInput.includes('comida') && normalizedInput.includes('stranger') &&
+        normalizedInput.includes('siempre contigo'))) {
+      setPhase('solved')
+      if (audioRef1.current) {
+        audioRef1.current.pause()
+      }
+      if (audioRef2.current) {
+        audioRef2.current.volume = 0.6
+        audioRef2.current.play()
+      }
     } else {
       setShowError(true)
-      setTimeout(() => setShowError(false), 1500)
+      setTimeout(() => setShowError(false), 2000)
     }
   }
 
-  const carouselItems = [
-    { emoji: '🍜', text: 'Ramen' },
-    { emoji: '💧', text: 'Casa inundada, trapeando' },
-    { emoji: '🕯️', text: 'Velitas' },
-    { emoji: '🏬', text: 'Centro comercial vacío' },
-    { emoji: '💡', text: 'Pared de Stranger Things' },
-    { emoji: '🎄', text: 'Árbol de navidad' },
-    { emoji: '🌙', text: 'Madrugada' },
-  ]
-
-  useEffect(() => {
-    if (isCorrect) {
-      // Silencio de 2 segundos después de mostrar la frase
-      const timer = setTimeout(() => setShowButton(true), 3000)
-      return () => clearTimeout(timer)
-    }
-  }, [isCorrect])
+  const restartSequence = () => {
+    setLightIndex(-1)
+    setIsSequenceRunning(true)
+  }
 
   return (
-    <div className="p-6 text-center">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
-      >
-        <span className="text-3xl">💡</span>
-        <h2 className="text-xl font-light text-pink-600 mt-2" style={{ fontFamily: 'Georgia, serif' }}>
-          Stranger Things
-        </h2>
-        <div className="w-16 h-0.5 bg-pink-300 mx-auto mt-3" />
-      </motion.div>
+    <div className="flex flex-col h-full bg-[#0a0a0a] text-white">
+      <audio ref={audioRef1} src="/stranger.mp3" loop />
+      <audio ref={audioRef2} src="/STRANGER2.mp3" />
 
       <AnimatePresence mode="wait">
-        {!isCorrect ? (
+        {phase === 'playing' ? (
           <motion.div
-            key="puzzle"
+            key="game"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, y: -50 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col p-4 items-center gap-4"
           >
-            {/* Escena estilo Stranger Things */}
-            <div 
-              className="relative w-full h-44 rounded-xl overflow-hidden mb-4"
-              style={{
-                background: 'linear-gradient(to bottom, #0a0a0a, #1a1a2e)',
-              }}
-            >
-              {/* Luces navideñas */}
-              <div className="absolute top-4 left-0 right-0 flex justify-around">
-                {['_', '_', 'G', '_', 'R'].map((letter, i) => (
-                  <motion.div
-                    key={i}
-                    className="flex flex-col items-center"
-                    animate={{
-                      opacity: letter !== '_' ? 1 : [0.3, 1, 0.3],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      delay: i * 0.2,
-                    }}
-                  >
-                    <div 
-                      className="w-2 h-2 rounded-full mb-1"
-                      style={{
-                        background: ['#ff6b6b', '#4ecdc4', '#ffe66d', '#ff8fab', '#a29bfe'][i % 5],
-                        boxShadow: `0 0 8px ${['#ff6b6b', '#4ecdc4', '#ffe66d', '#ff8fab', '#a29bfe'][i % 5]}`,
-                      }}
-                    />
-                    <span className="text-white font-mono text-base tracking-widest">
-                      {letter}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Cable de luces */}
-              <div 
-                className="absolute top-8 left-4 right-4 h-px"
-                style={{
-                  background: '#333',
-                }}
-              />
+            {/* Cabecera */}
+            <div className="text-center mb-2">
+              <h2 className="text-red-600 font-bold text-2xl tracking-[0.2em]" style={{ fontFamily: 'Georgia, serif' }}>
+                STRANGER THINGS
+              </h2>
+              <p className="text-xs text-gray-400 uppercase tracking-widest mt-1">Descifra el mensaje de las luces</p>
             </div>
 
-            {/* Input para adivinar */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-3"
+            {/* Pared de luces */}
+            <div
+              className="relative w-full aspect-[4/3] rounded-lg overflow-hidden border border-gray-800 shadow-2xl"
+              style={{
+                backgroundImage: 'url("/paredstranger.jpg")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
             >
-              <div className="flex gap-2 justify-center">
+              <div className="absolute inset-0 bg-black/40 flex flex-col justify-center gap-6 p-4">
+                {alphabetRows.map((row, rIdx) => (
+                  <div key={rIdx} className="flex justify-around items-center">
+                    {row.map((letter, lIdx) => {
+                      const isActive = typeof sequence[lightIndex] === 'object' &&
+                        (sequence[lightIndex] as any).r === rIdx &&
+                        (sequence[lightIndex] as any).c === lIdx
+
+                      const lightColor = ['#ffed4a', '#ff4a4a', '#4aff62', '#4a90ff', '#f04aff'][(rIdx * 10 + lIdx) % 5]
+
+                      return (
+                        <div key={letter} className="relative flex flex-col items-center">
+                          {/* Luz */}
+                          <motion.div
+                            animate={{
+                              opacity: isActive ? 1 : 0.1,
+                              scale: isActive ? 1.2 : 1,
+                              boxShadow: isActive ? `0 0 20px ${lightColor}, 0 0 40px ${lightColor}` : 'none'
+                            }}
+                            className="w-3 h-3 rounded-full mb-1"
+                            style={{ backgroundColor: lightColor }}
+                          />
+                          {/* Letra */}
+                          <span
+                            className={`text-xl font-bold font-mono transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/20'}`}
+                          >
+                            {letter}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Controles */}
+            <div className="w-full space-y-4">
+              <div className="flex gap-2">
                 <input
                   type="text"
                   value={inputWord}
                   onChange={(e) => setInputWord(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && checkWord()}
-                  placeholder="Escribe la palabra..."
-                  className="px-3 py-2 rounded-full border border-pink-300 focus:border-pink-500 focus:outline-none text-center text-pink-600 bg-white/50 text-sm"
-                  maxLength={10}
+                  onKeyPress={(e) => e.key === 'Enter' && checkPhrase()}
+                  placeholder="Escribe el mensaje aquí..."
+                  className="flex-1 bg-gray-900 border border-red-900/50 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-600 transition-colors text-sm"
                 />
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={checkWord}
-                  className="px-4 py-2 bg-pink-500 text-white rounded-full text-sm"
+                <button
+                  onClick={checkPhrase}
+                  className="bg-red-700 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-bold transition-colors"
                 >
-                  ✓
-                </motion.button>
+                  VALIDAR
+                </button>
               </div>
 
-              <AnimatePresence>
-                {showError && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="text-red-400 text-xs"
-                  >
-                    Intenta de nuevo...
-                  </motion.p>
-                )}
-              </AnimatePresence>
-            </motion.div>
+              <div className="flex justify-between items-center">
+                <button
+                  onClick={restartSequence}
+                  className="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition-colors"
+                >
+                  <motion.span animate={{ rotate: isSequenceRunning ? 0 : 360 }}>🔄</motion.span>
+                  REINICIAR SEQUENCIA
+                </button>
+
+                <AnimatePresence>
+                  {showError && (
+                    <motion.span
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-red-500 text-xs font-bold"
+                    >
+                      ¡Mensaje incorrecto! Intenta de nuevo...
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           </motion.div>
         ) : (
           <motion.div
-            key="carousel"
-            initial={{ opacity: 0, scale: 0.95 }}
+            key="solved"
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center p-6 text-center gap-6"
           >
-            {/* Carrusel de momentos */}
-            <div className="relative w-full h-36 rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-pink-50 to-purple-50">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={carouselIndex}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -30 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center"
-                >
-                  <span className="text-4xl mb-2">
-                    {carouselItems[carouselIndex].emoji}
-                  </span>
-                  <p className="text-pink-600 text-sm">
-                    {carouselItems[carouselIndex].text}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Navegación */}
-              <button
-                onClick={() => setCarouselIndex(i => i > 0 ? i - 1 : carouselItems.length - 1)}
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center text-pink-500 text-sm"
-              >
-                ‹
-              </button>
-              <button
-                onClick={() => setCarouselIndex(i => i < carouselItems.length - 1 ? i + 1 : 0)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 bg-white/80 rounded-full flex items-center justify-center text-pink-500 text-sm"
-              >
-                ›
-              </button>
-
-              {/* Indicadores */}
-              <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
-                {carouselItems.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                      i === carouselIndex ? 'bg-pink-500' : 'bg-pink-200'
-                    }`}
-                  />
-                ))}
-              </div>
+            <div className="relative w-full aspect-[9/16] max-h-[50vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10">
+              <img
+                src="/ilustracionstranger.png"
+                alt="Stranger Things Illustration"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             </div>
 
-            {/* Frase final */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <p className="text-pink-600 mb-4" style={{ fontFamily: 'Georgia, serif' }}>
-                Yo era donde te sentías segura.
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold text-red-600 tracking-wider">SIEMPRE CONTIGO</h3>
+              <p className="text-gray-300 italic text-sm leading-relaxed px-4">
+                "Luces, risas comida y Stranger Things… siempre contigo"
               </p>
+            </div>
 
-              {/* Botón después del silencio */}
-              {showButton && (
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={onComplete}
-                  className="text-pink-400 text-sm"
-                >
-                  ✓
-                </motion.button>
-              )}
-            </motion.div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onComplete}
+              className="mt-4 bg-white text-black px-10 py-3 rounded-full font-bold shadow-lg hover:bg-gray-200 transition-colors"
+            >
+              CONTINUAR
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
