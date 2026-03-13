@@ -429,7 +429,7 @@ function PostIt() {
       initial={{ opacity: 0, x: 50, rotate: 5 }}
       animate={{ opacity: 1, x: 0, rotate: -2 }}
       transition={{ delay: 1.5, duration: 1 }}
-      className="absolute bottom-10 right-4 md:right-10 z-30 max-w-[170px] md:max-w-[200px]"
+      className="absolute top-24 right-4 md:right-10 z-30 max-w-[170px] md:max-w-[200px]"
     >
       <div
         className="relative bg-[#fef9c3] p-4 shadow-xl border-l-4 border-yellow-200"
