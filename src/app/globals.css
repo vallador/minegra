@@ -179,22 +179,16 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-/* Scrollbar personalizado */
-::-webkit-scrollbar {
-  width: 6px;
+/* Scrollbar personalizado específico */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
 }
-
-::-webkit-scrollbar-track {
-  background: transparent;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(236, 72, 153, 0.3);
+  border-radius: 10px;
 }
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 182, 193, 0.5);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 182, 193, 0.8);
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 72, 153, 0.6);
 }
 
 /* Estilo para inputs */
