@@ -29,7 +29,7 @@ const DOGS: Dog[] = [
     hp: 100,
     attack: 'Ladrido Feroz',
     color: '#374151',
-    imagePos: 'top' // Para que se vea más de abajo
+    imagePos: '25% center' // Ajustado para que no quede tan bajo
   },
   {
     id: 'princesa',
@@ -118,7 +118,7 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-6"
           >
-            <p className="text-gray-600 italic">"Gotta catch 'em all!" ¿A quién llevamos?</p>
+            <p className="text-gray-600 italic">¿A quién llevamos?</p>
 
             <div className="grid grid-cols-2 gap-4">
               {DOGS.map(dog => (
@@ -314,15 +314,17 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
             className="space-y-6"
           >
             <motion.div
-              initial={{ scale: 0.8, rotate: choice === 'dar' ? -5 : 5 }}
-              animate={{ scale: 1, rotate: 0 }}
-              className="relative rounded-[40px] overflow-hidden shadow-2xl border-8 border-white"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', damping: 12 }}
+              className="bg-white p-8 rounded-[40px] shadow-2xl border-4 border-pink-100 flex items-center justify-center min-h-[250px]"
             >
-              <img
-                src={choice === 'dar' ? '/ilustraciondar.png' : '/ilustracioncaer.png'}
-                alt="Resultado"
-                className="w-full h-auto"
-              />
+              <p className="text-xl text-pink-700 leading-relaxed font-medium italic" style={{ fontFamily: 'Georgia, serif' }}>
+                {choice === 'dar'
+                  ? "Yo sabía que ibas a aceptar, solo excusas tuyas para sudar en mi mano"
+                  : "¿Cómo se te ocurre? Yo solo te dejo caer en mis encantos"
+                }
+              </p>
             </motion.div>
 
             <motion.button
