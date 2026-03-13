@@ -59,23 +59,8 @@ export function FlowerTu({ onComplete }: FlowerTuProps) {
         <div className="w-16 h-0.5 bg-pink-300 mx-auto mt-3" />
       </motion.div>
 
-      {/* Ilustración Placeholder (A la espera de la imagen del usuario) */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.5 }}
-        className="w-full aspect-[4/3] bg-pink-50 rounded-2xl flex items-center justify-center mb-8 border-2 border-dashed border-pink-200 shrink-0 overflow-hidden relative"
-      >
-        {/* Usaremos una imagen temporal o un placeholder bonito */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-          <Heart className="text-pink-200 mb-2" size={48} />
-          <p className="text-pink-300 text-xs italic">Cargando ilustración...</p>
-        </div>
-        {/* Cuando el usuario pase la imagen, se reemplazará este div por un <img /> */}
-      </motion.div>
-
       {/* Carta */}
-      <div className="w-full space-y-8 pb-12 z-10 shrink-0">
+      <div className="w-full space-y-8 pb-8 z-10 shrink-0">
         {paragraphs.map((text, idx) => (
           <motion.p
             key={idx}
@@ -89,6 +74,21 @@ export function FlowerTu({ onComplete }: FlowerTuProps) {
           </motion.p>
         ))}
       </div>
+
+      {/* Ilustración Final ( family.png ) */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={showButton ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+        transition={{ duration: 1 }}
+        className="w-full aspect-[3/4] max-h-[50vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/50 mb-8 shrink-0 relative"
+      >
+        <img
+          src="/family.png"
+          alt="Family"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-pink-100/20 to-transparent" />
+      </motion.div>
 
       <AnimatePresence>
         {showButton && (

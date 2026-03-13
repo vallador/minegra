@@ -190,7 +190,7 @@ export function TulipBouquet() {
         )}
         {harvestedFlowerId === 7 && (
           <HarvestAchievement
-            imagePath="/tulipan1.png"
+            imagePath="/family.png"
             title="Séptimo tulipán cosechado"
             onClose={() => setHarvestedFlowerId(null)}
           />
@@ -199,6 +199,7 @@ export function TulipBouquet() {
           <HarvestAchievement
             imagePath="/tulipan-icon.png"
             title="Último tulipán cosechado, tus flores te esperan, con todo mi cariño Deivid"
+            audioSrc="/final.mp3"
             onClose={() => setHarvestedFlowerId(null)}
           />
         )}

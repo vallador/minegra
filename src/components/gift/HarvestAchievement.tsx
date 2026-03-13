@@ -7,14 +7,25 @@ interface HarvestAchievementProps {
     onClose: () => void
     imagePath: string
     title: string
+    audioSrc?: string
 }
 
-export function HarvestAchievement({ onClose, imagePath, title }: HarvestAchievementProps) {
+export function HarvestAchievement({ onClose, imagePath, title, audioSrc }: HarvestAchievementProps) {
     const [showConfetti, setShowConfetti] = useState(false)
 
     useEffect(() => {
         setShowConfetti(true)
-    }, [])
+
+        if (audioSrc) {
+            const audio = new Audio(audioSrc)
+            audio.play().catch(e => console.error("Error reproduciendo audio:", e))
+
+            return () => {
+                audio.pause()
+                audio.currentTime = 0
+            }
+        }
+    }, [audioSrc])
 
     return (
         <motion.div
