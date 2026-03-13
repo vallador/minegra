@@ -247,14 +247,14 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
           ) : isClosed && !canOpen && showTimer ? (
             <motion.div
               key="timer"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              className="bg-white/40 backdrop-blur-[2px] px-2 py-0.5 rounded-full border border-white/50"
+              initial={{ opacity: 0, scale: 0.8, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 10 }}
+              className="bg-pink-600/95 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg border border-pink-400/30"
             >
-              <div className="flex items-center gap-1">
-                <span className="text-[9px] text-gray-400">🔒</span>
-                <span className="text-[9px] text-gray-500 font-bold tracking-tight">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs">🔒</span>
+                <span className="text-[11px] text-white font-bold tracking-tight">
                   <Countdown id={id} />
                 </span>
               </div>
