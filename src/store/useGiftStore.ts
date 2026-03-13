@@ -57,7 +57,7 @@ const initialFlowers: Flower[] = [
 ]
 
 const START_TIME = new Date('2026-03-13T00:00:00-04:00').getTime()
-const INTERVAL = 3 * 60 * 60 * 1000 // 3 horas
+const INTERVAL = 4 * 60 * 60 * 1000 // 4 horas (el 4to se abre a mediodía)
 
 export const useGiftStore = create<GiftState>()(
   persist(
