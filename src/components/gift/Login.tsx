@@ -45,12 +45,15 @@ export function Login() {
                         <span className="text-4xl">🌷</span>
                     </motion.div>
                     <h1
-                        className="text-3xl font-light text-pink-600 tracking-wide"
-                        style={{ fontFamily: 'Georgia, serif' }}
+                        className="text-3xl font-bold text-white tracking-wide"
+                        style={{ fontFamily: 'Georgia, serif', textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}
                     >
                         Para mi Negra
                     </h1>
-                    <p className="text-pink-400 mt-2 text-sm italic">
+                    <p
+                        className="text-white mt-2 text-sm font-bold"
+                        style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
+                    >
                         Introduce la clave para entrar
                     </p>
                 </div>
@@ -93,7 +96,8 @@ export function Login() {
                                 localStorage.clear();
                                 window.location.reload();
                             }}
-                            className="text-[10px] text-pink-200 hover:text-pink-300 transition-colors uppercase tracking-widest"
+                            className="text-[10px] text-white font-bold hover:text-white/80 transition-colors uppercase tracking-widest"
+                            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}
                         >
                             Limpiar caché del regalo
                         </button>
