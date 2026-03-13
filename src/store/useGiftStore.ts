@@ -99,7 +99,12 @@ export const useGiftStore = create<GiftState>()(
             isLoggedIn: true,
             isAdmin: false,
             flowers: newFlowers,
-            persistedFlowers: newFlowers
+            persistedFlowers: newFlowers,
+            currentFlower: null,
+            showTrivia: false,
+            showLetter: false,
+            showBlackScreen: false,
+            triviaCompleted: false
           })
           return true
         }
@@ -162,6 +167,11 @@ export const useGiftStore = create<GiftState>()(
 
         // La primera flor siempre se puede abrir si el tiempo pasó
         if (id === 1) return true
+
+        // Habilitar 4 y 5 directamente si tienen tiempo override (bartolito login)
+        if ((id === 4 || id === 5) && flower?.unlockTime !== undefined && now >= flower.unlockTime) {
+          return true
+        }
 
         // Para abrir la flor N, la flor N-1 debe estar florecida o marchita o incompleta
         const previousFlower = state.flowers.find(f => f.id === id - 1)
@@ -283,7 +293,7 @@ export const useGiftStore = create<GiftState>()(
     }),
     {
       name: 'gift-storage',
-      version: 3, // Incrementar
+      version: 4, // Incrementar a 4 para limpiar cache anterior
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
         isAdmin: state.isAdmin,
