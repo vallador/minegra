@@ -12,13 +12,55 @@ interface Dog {
   name: string
   image: string
   subtitle: string
+  type: string
+  hp: number
+  attack: string
+  color: string
+  imagePos?: string
 }
 
 const DOGS: Dog[] = [
-  { id: 'rony', name: 'Rony', image: '/rony.png', subtitle: 'El negro más temido' },
-  { id: 'princesa', name: 'Princesa', image: '/princesa.png', subtitle: 'Mi bebé conscentida' },
-  { id: 'fresis', name: 'Fresis', image: '/FRESIS.png', subtitle: 'la que tiene una cama mas grande que la mía' },
-  { id: 'celes', name: 'Celes', image: '/CELES.png', subtitle: 'la mas salvaje, dijiste que eras tu' },
+  {
+    id: 'rony',
+    name: 'Rony',
+    image: '/rony.png',
+    subtitle: 'El negro más temido',
+    type: 'Sombra 🌑',
+    hp: 100,
+    attack: 'Ladrido Feroz',
+    color: '#374151',
+    imagePos: 'top' // Para que se vea más de abajo
+  },
+  {
+    id: 'princesa',
+    name: 'Princesa',
+    image: '/princesa.png',
+    subtitle: 'Mi bebé conscentida',
+    type: 'Hada 💖',
+    hp: 85,
+    attack: 'Mirada Tierna',
+    color: '#ec4899'
+  },
+  {
+    id: 'fresis',
+    name: 'Fresis',
+    image: '/FRESIS.png',
+    subtitle: 'la que tiene una cama mas grande que la mía',
+    type: 'Siesta 💤',
+    hp: 120,
+    attack: 'Súper Ronquido',
+    color: '#6366f1'
+  },
+  {
+    id: 'celes',
+    name: 'Celes',
+    image: '/CELES.png',
+    subtitle: 'la mas salvaje, dijiste que eras tu',
+    type: 'Salvaje 🌿',
+    hp: 95,
+    attack: 'Mordisquito',
+    color: '#10b981'
+  },
 ]
 
 export function FlowerLoma({ onComplete }: FlowerLomaProps) {
@@ -35,7 +77,6 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
     )
   }
 
-  // Auto-scroll logic when phase changes
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: 0, behavior: 'smooth' })
@@ -46,7 +87,7 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
     <div
       ref={scrollRef}
       className={`p-6 text-center relative max-h-[80vh] overflow-y-auto custom-scrollbar ${isCameraMode ? 'cursor-camera' : ''}`}
-      style={isCameraMode ? { cursor: 'crosshair' } : {}} // Custom cursor logic can be added to CSS
+      style={isCameraMode ? { cursor: 'crosshair' } : {}}
     >
       <style jsx global>{`
         .cursor-camera {
@@ -68,7 +109,7 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
       </motion.div>
 
       <AnimatePresence mode="wait">
-        {/* Phase 0: Dog Selection */}
+        {/* Phase 0: Pokemon Dog Selection */}
         {phase === 0 && (
           <motion.div
             key="p0"
@@ -77,23 +118,64 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-6"
           >
-            <p className="text-gray-600 italic">¿A quién quieres llevar a pasear hoy?</p>
+            <p className="text-gray-600 italic">"Gotta catch 'em all!" ¿A quién llevamos?</p>
 
             <div className="grid grid-cols-2 gap-4">
               {DOGS.map(dog => (
                 <motion.div
                   key={dog.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.05, rotate: 1 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => toggleDog(dog.id)}
-                  className={`p-2 rounded-2xl border-2 transition-all cursor-pointer bg-white ${selectedDogs.includes(dog.id)
-                      ? 'border-pink-500 shadow-lg shadow-pink-100'
-                      : 'border-transparent shadow-sm'
+                  className={`relative p-3 rounded-xl border-4 transition-all cursor-pointer bg-white overflow-hidden ${selectedDogs.includes(dog.id)
+                    ? 'border-yellow-400 shadow-xl ring-4 ring-yellow-200'
+                    : 'border-gray-100'
                     }`}
+                  style={{ backgroundImage: `linear-gradient(to bottom, white, ${dog.color}10)` }}
                 >
-                  <img src={dog.image} alt={dog.name} className="w-full h-32 object-cover rounded-xl mb-2" />
-                  <p className="text-xs font-bold text-pink-600 uppercase tracking-tighter">{dog.name}</p>
-                  <p className="text-[10px] text-gray-400 leading-tight italic px-1">{dog.subtitle}</p>
+                  {/* Header de la carta */}
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-tighter">Básico</span>
+                    <span className="text-[10px] font-bold text-red-600">HP {dog.hp}</span>
+                  </div>
+
+                  {/* Imagen con ajuste para Rony */}
+                  <div className="relative w-full h-28 rounded-md overflow-hidden bg-gray-50 border-2 border-yellow-500/30">
+                    <img
+                      src={dog.image}
+                      alt={dog.name}
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: dog.imagePos || 'center' }}
+                    />
+                  </div>
+
+                  {/* Info de la carta */}
+                  <div className="mt-2 text-left">
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs font-black text-gray-800 uppercase tracking-tight">{dog.name}</p>
+                      <span className="text-[9px] bg-gray-100 px-1 rounded border border-gray-200">{dog.type}</span>
+                    </div>
+                    <p className="text-[8px] text-gray-400 italic mb-2 line-clamp-1">"{dog.subtitle}"</p>
+
+                    {/* Stats de Pokemon */}
+                    <div className="space-y-1 pt-1 border-t border-gray-100">
+                      <div className="flex items-center gap-1">
+                        <span className="text-[8px] font-bold text-pink-500">✷︎</span>
+                        <p className="text-[9px] font-bold text-gray-700">{dog.attack}</p>
+                        <p className="text-[9px] ml-auto font-bold text-gray-500">20+</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {selectedDogs.includes(dog.id) && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute top-1 right-1 bg-yellow-400 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]"
+                    >
+                      ✓
+                    </motion.div>
+                  )}
                 </motion.div>
               ))}
             </div>
@@ -103,25 +185,62 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setPhase(1)}
-              className="w-full py-4 bg-pink-500 text-white rounded-full font-bold shadow-xl shadow-pink-100 transition-all disabled:opacity-50 disabled:grayscale"
+              className="w-full py-4 bg-yellow-400 text-gray-900 rounded-xl font-black shadow-xl shadow-yellow-100 transition-all border-b-4 border-yellow-600 uppercase tracking-widest disabled:opacity-50"
             >
-              Sacar a pasear
+              ¡Sacar a pasear!
             </motion.button>
           </motion.div>
         )}
 
-        {/* Phase 1: Missing Dogs */}
+        {/* Phase 1: Dramatic Text Reveal */}
         {phase === 1 && (
           <motion.div
             key="p1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center min-h-[400px] space-y-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="space-y-4"
+            >
+              <p className="text-2xl text-gray-400 italic font-light">"Creo que te faltaron unos..."</p>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5, duration: 1.5 }}
+                className="text-3xl text-pink-600 font-bold"
+              >
+                "...así que vamos a llevarlos también"
+              </motion.p>
+            </motion.div>
+
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 3.5, type: 'spring' }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setPhase(2)}
+              className="w-16 h-16 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-xl text-3xl font-bold"
+            >
+              →
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Phase 2: Missing Dogs Illustration */}
+        {phase === 2 && (
+          <motion.div
+            key="p2"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.1 }}
             className="space-y-6"
           >
-            <p className="text-gray-600 italic">"Creo que te faltaron algunos..."</p>
-            <h3 className="text-pink-600 font-bold text-lg">¡Así que vamos a llevarlos también!</h3>
-
             <motion.div
               className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white"
               initial={{ rotate: -2 }}
@@ -133,7 +252,7 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setPhase(2)}
+              onClick={() => setPhase(3)}
               className="w-full py-4 bg-pink-500 text-white rounded-full font-bold shadow-xl shadow-pink-100"
             >
               Le debes una salida a los perros oiste
@@ -141,10 +260,10 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
           </motion.div>
         )}
 
-        {/* Phase 2: Up Choice */}
-        {phase === 2 && (
+        {/* Phase 3: Up Choice */}
+        {phase === 3 && (
           <motion.div
-            key="p2"
+            key="p3"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
@@ -154,11 +273,22 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
               <img src="/ilustracionup.png" alt="Estilo Up" className="w-full h-auto" />
             </div>
 
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-pink-100 shadow-sm"
+            >
+              <p className="text-gray-700 leading-relaxed font-medium text-sm italic" style={{ fontFamily: 'Georgia, serif' }}>
+                "El día en que tu asma me cayó bien fue cuando fue la excusa perfecta para llevarte de la mano por toda la montaña"
+              </p>
+            </motion.div>
+
             <div className="flex gap-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => { setChoice('dar'); setPhase(3); }}
+                onClick={() => { setChoice('dar'); setPhase(4); }}
                 className="flex-1 py-4 bg-green-500 text-white rounded-2xl font-bold shadow-lg shadow-green-100"
               >
                 Dar la mano
@@ -166,7 +296,7 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => { setChoice('caer'); setPhase(3); }}
+                onClick={() => { setChoice('caer'); setPhase(4); }}
                 className="flex-1 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-lg shadow-red-100"
               >
                 Dejarla caer
@@ -175,10 +305,10 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
           </motion.div>
         )}
 
-        {/* Phase 3: Choice Result */}
-        {phase === 3 && (
+        {/* Phase 4: Choice Result */}
+        {phase === 4 && (
           <motion.div
-            key="p3"
+            key="p4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="space-y-6"
@@ -198,7 +328,7 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={() => { setPhase(4); setIsCameraMode(true); }}
+              onClick={() => { setPhase(5); setIsCameraMode(true); }}
               className="w-16 h-16 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-xl mx-auto text-3xl font-bold"
             >
               →
@@ -206,10 +336,10 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
           </motion.div>
         )}
 
-        {/* Phase 4: Mountain Camera */}
-        {phase === 4 && (
+        {/* Phase 5: Mountain Camera */}
+        {phase === 5 && (
           <motion.div
-            key="p4"
+            key="p5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="space-y-6"
@@ -224,12 +354,12 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
                   <div
                     onClick={() => setFocusSection(1)}
                     className="w-1/2 h-full bg-cover bg-center cursor-camera hover:brightness-110 transition-all"
-                    style={{ backgroundImage: 'url("/ilustraciongeneralmontaña.png")', backgroundPosition: 'left' }}
+                    style={{ backgroundImage: 'url("/ilustraciongeneralmontana.png")', backgroundPosition: 'left' }}
                   />
                   <div
                     onClick={() => setFocusSection(2)}
                     className="w-1/2 h-full bg-cover bg-center cursor-camera hover:brightness-110 transition-all"
-                    style={{ backgroundImage: 'url("/ilustraciongeneralmontaña.png")', backgroundPosition: 'right' }}
+                    style={{ backgroundImage: 'url("/ilustraciongeneralmontana.png")', backgroundPosition: 'right' }}
                   />
                 </div>
               ) : (
@@ -253,7 +383,7 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 2 }}
-                onClick={() => { setPhase(5); setIsCameraMode(false); }}
+                onClick={() => { setPhase(6); setIsCameraMode(false); }}
                 className="w-full py-4 bg-gray-800 text-white rounded-full font-bold shadow-lg"
               >
                 He terminado de explorar
@@ -262,10 +392,10 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
           </motion.div>
         )}
 
-        {/* Phase 5: Final Message */}
-        {phase === 5 && (
+        {/* Phase 6: Final Message */}
+        {phase === 6 && (
           <motion.div
-            key="p5"
+            key="p6"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="space-y-8 py-10"
