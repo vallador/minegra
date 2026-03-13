@@ -14,8 +14,10 @@ import { Trivia } from './Trivia'
 import { FinalLetter } from './FinalLetter'
 import { BlackScreen } from './BlackScreen'
 import { LogOut, RotateCcw } from 'lucide-react'
+import { HarvestAchievement } from './HarvestAchievement'
 export function TulipBouquet() {
   const { flowers, currentFlower, openFlower, showTrivia, showLetter, showBlackScreen } = useGiftStore()
+  const [harvestedFlowerId, setHarvestedFlowerId] = React.useState<number | null>(null)
 
   const decorativePositions = [
     { x: -70, y: -20, rotate: -35, scale: 0.8 },
@@ -142,7 +144,21 @@ export function TulipBouquet() {
       {/* Modal de flor abierta - SIN botón de cerrar */}
       <AnimatePresence>
         {currentFlower && (
-          <FlowerModal flowerId={currentFlower} />
+          <FlowerModal
+            flowerId={currentFlower}
+            onHarvest={(id) => setHarvestedFlowerId(id)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Pantalla de Cosecha */}
+      <AnimatePresence>
+        {harvestedFlowerId === 1 && (
+          <HarvestAchievement
+            imagePath="/tulipan1.png"
+            title="Primer tulipán cosechado"
+            onClose={() => setHarvestedFlowerId(null)}
+          />
         )}
       </AnimatePresence>
 
@@ -167,7 +183,7 @@ export function TulipBouquet() {
   )
 }
 
-function FlowerModal({ flowerId }: { flowerId: number }) {
+function FlowerModal({ flowerId, onHarvest }: { flowerId: number, onHarvest?: (id: number) => void }) {
   const { bloomFlower, flowers } = useGiftStore()
   const flower = flowers.find(f => f.id === flowerId)
 
@@ -175,6 +191,7 @@ function FlowerModal({ flowerId }: { flowerId: number }) {
 
   const handleComplete = () => {
     bloomFlower(flowerId)
+    if (onHarvest) onHarvest(flowerId)
   }
 
   const flowerComponents: Record<number, React.ReactNode> = {
