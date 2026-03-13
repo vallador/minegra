@@ -134,6 +134,9 @@ export const useGiftStore = create<GiftState>()(
         // Bypass para admin
         if (state.isAdmin) return true
 
+        // Desbloqueo manual del tulipán 3 (solicitud del usuario)
+        if (id === 3) return true
+
         const now = Date.now()
         const unlockTime = START_TIME + (id - 1) * INTERVAL
         if (now < unlockTime) return false
