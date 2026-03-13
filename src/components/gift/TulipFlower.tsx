@@ -56,7 +56,7 @@ export function TulipFlower({ id, status, index, canOpen, onClick }: TulipFlower
         primary: '#ffffff',
         secondary: '#f9f9f9',
         petal: '#fffefc',
-        text: '#c9c4b9'
+        text: '#000000'
       }
     }
     // Si está disponible o ya en interacción, usar Rosado
