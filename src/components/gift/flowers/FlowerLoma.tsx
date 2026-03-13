@@ -371,11 +371,24 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
                   onClick={() => setFocusSection(null)}
                 >
                   <img
-                    src={focusSection === 1 ? '/imagengen1.png' : '/imagengen2.png'}
+                    src={focusSection === 1 ? '/imagengen1.jpg' : '/imagengen2.jpg'}
                     alt="Detalle"
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-white/10 pointer-events-none border-[20px] border-white/20" />
+                  <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute bottom-4 left-4 right-4 bg-white/80 backdrop-blur-sm p-3 rounded-lg border border-white/50"
+                  >
+                    <p className="text-[10px] text-gray-800 italic font-medium leading-tight">
+                      {focusSection === 1
+                        ? "siempre me ha gustado como tomas fotos es una culidad muy interesante tuya"
+                        : "me encanto jugar a las luchitas contigo, me encantó perseguirte por el bosque"
+                      }
+                    </p>
+                  </motion.div>
+                  <div className="absolute inset-0 border-[20px] border-white/20 pointer-events-none" />
                 </motion.div>
               )}
             </div>
@@ -424,10 +437,49 @@ export function FlowerLoma({ onComplete }: FlowerLomaProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 3, type: 'spring' }}
-              onClick={onComplete}
+              onClick={() => setPhase(7)}
               className="w-20 h-20 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-2xl mx-auto text-4xl font-bold"
             >
               ❤️
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Phase 7: Flores Final */}
+        {phase === 7 && (
+          <motion.div
+            key="p7"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+          >
+            <motion.div
+              initial={{ scale: 0.9, rotate: -2 }}
+              animate={{ scale: 1, rotate: 0 }}
+              className="relative rounded-[40px] overflow-hidden shadow-2xl border-8 border-white"
+            >
+              <img src="/imagenflores.jpg" alt="Flores" className="w-full h-auto" />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl border border-pink-100 shadow-sm"
+            >
+              <p className="text-gray-700 leading-relaxed font-medium text-sm italic" style={{ fontFamily: 'Georgia, serif' }}>
+                "Lo que más me gustó de esa salida fue colocarte flores en tu cabello, y tú me las colocaras en mi calva... perdí el gloss y el chaleco a propósito."
+              </p>
+            </motion.div>
+
+            <motion.button
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 2, type: 'spring' }}
+              onClick={onComplete}
+              className="w-20 h-20 bg-pink-500 text-white rounded-full flex items-center justify-center shadow-2xl mx-auto text-4xl font-bold"
+            >
+              🌻
             </motion.button>
           </motion.div>
         )}
