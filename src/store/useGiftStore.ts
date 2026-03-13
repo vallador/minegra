@@ -50,7 +50,7 @@ const initialFlowers: Flower[] = [
   { id: 2, title: 'La loma', status: 'closed' },
   { id: 3, title: 'Lluvia', status: 'closed' },
   { id: 4, title: 'Humor', status: 'closed' },
-  { id: 5, title: 'Basket', status: 'closed' },
+  { id: 5, title: 'Determinación', status: 'closed' },
   { id: 6, title: 'Hogar', status: 'closed' },
   { id: 7, title: 'Tú', status: 'closed' },
   { id: 8, title: '?', status: 'closed' },

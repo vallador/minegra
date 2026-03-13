@@ -6,7 +6,7 @@ import { FlowerInicio } from './flowers/FlowerInicio'
 import { FlowerLoma } from './flowers/FlowerLoma'
 import { FlowerLluvia } from './flowers/FlowerLluvia'
 import { FlowerJuegos } from './flowers/FlowerJuegos'
-import { FlowerBasket } from './flowers/FlowerBasket'
+import { FlowerCarta } from './flowers/FlowerCarta'
 import { FlowerHogar } from './flowers/FlowerHogar'
 import { FlowerTu } from './flowers/FlowerTu'
 import { FlowerIncomplete } from './flowers/FlowerIncomplete'
@@ -220,7 +220,7 @@ function FlowerModal({ flowerId, onHarvest }: { flowerId: number, onHarvest?: (i
     2: <FlowerLoma onComplete={handleComplete} />,
     3: <FlowerLluvia onComplete={handleComplete} />,
     4: <FlowerJuegos onComplete={handleComplete} />,
-    5: <FlowerBasket onComplete={handleComplete} />,
+    5: <FlowerCarta onComplete={handleComplete} />,
     6: <FlowerHogar onComplete={handleComplete} />,
     7: <FlowerTu onComplete={handleComplete} />,
     8: <FlowerIncomplete />,
