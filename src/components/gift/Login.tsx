@@ -65,7 +65,7 @@ export function Login() {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Contraseña..."
+                            placeholder="El nombre de tu gallo fino..."
                             className="w-full px-4 py-3 bg-white/50 backdrop-blur-sm border-b-2 border-pink-200 text-pink-700 placeholder:text-pink-300 focus:outline-none focus:border-pink-500 transition-colors text-center"
                         />
                         {error && (

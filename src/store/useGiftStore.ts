@@ -73,7 +73,7 @@ export const useGiftStore = create<GiftState>()(
       login: (password: string) => {
         const pass = password.trim().toLowerCase()
         console.log('Intentando login con:', pass) // Debug para el usuario en consola
-        if (pass === 'negra2026') {
+        if (pass === 'bartolito') {
           console.log('Login exitoso como Negra')
           set({ isLoggedIn: true, isAdmin: false })
           return true
