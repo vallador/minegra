@@ -174,6 +174,13 @@ export function TulipBouquet() {
             onClose={() => setHarvestedFlowerId(null)}
           />
         )}
+        {harvestedFlowerId === 4 && (
+          <HarvestAchievement
+            imagePath="/imagengen2.jpg"
+            title="Cuarto tulipán cosechado"
+            onClose={() => setHarvestedFlowerId(null)}
+          />
+        )}
       </AnimatePresence>
 
       {/* Trivia */}
