@@ -205,15 +205,7 @@ export function FlowerLluvia({ onComplete }: FlowerLluviaProps) {
             animate={{ opacity: 1 }}
             className="space-y-6"
           >
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5 }}
-              className="text-pink-600 italic text-sm px-4"
-              style={{ fontFamily: 'Georgia, serif' }}
-            >
-              "Yo lo recordé siempre. Tú decidiste cuándo."
-            </motion.p>
+
 
             {showButton && (
               <motion.button
