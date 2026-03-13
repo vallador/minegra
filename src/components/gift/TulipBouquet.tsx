@@ -195,6 +195,13 @@ export function TulipBouquet() {
             onClose={() => setHarvestedFlowerId(null)}
           />
         )}
+        {harvestedFlowerId === 8 && (
+          <HarvestAchievement
+            imagePath="/tulipan-icon.png"
+            title="Último tulipán cosechado, tus flores te esperan, con todo mi cariño Deivid"
+            onClose={() => setHarvestedFlowerId(null)}
+          />
+        )}
       </AnimatePresence>
 
       {/* Trivia */}
@@ -237,7 +244,7 @@ function FlowerModal({ flowerId, onHarvest }: { flowerId: number, onHarvest?: (i
     5: <FlowerCarta onComplete={handleComplete} />,
     6: <FlowerHogar onComplete={handleComplete} />,
     7: <FlowerTu onComplete={handleComplete} />,
-    8: <FlowerIncomplete />,
+    8: <FlowerIncomplete onComplete={handleComplete} />,
   }
 
   return (
