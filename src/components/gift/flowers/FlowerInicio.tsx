@@ -10,6 +10,7 @@ interface FlowerInicioProps {
 export function FlowerInicio({ onComplete }: FlowerInicioProps) {
   const [phase, setPhase] = useState(0)
   const [showButton, setShowButton] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
     if (phase === 2) {
@@ -18,6 +19,30 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
       return () => clearTimeout(timer)
     }
   }, [phase])
+
+  const toggleAudio = (playing?: boolean) => {
+    const audio = document.getElementById('bg-audio') as HTMLAudioElement
+    if (!audio) return
+
+    if (playing !== undefined) {
+      if (playing) {
+        audio.play().catch(e => console.log("Audio play blocked:", e))
+        setIsPlaying(true)
+      } else {
+        audio.pause()
+        setIsPlaying(false)
+      }
+      return
+    }
+
+    if (audio.paused) {
+      audio.play().catch(e => console.log("Audio play blocked:", e))
+      setIsPlaying(true)
+    } else {
+      audio.pause()
+      setIsPlaying(false)
+    }
+  }
 
   return (
     <div className="p-6 text-center">
@@ -63,13 +88,13 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
         {/* Cancha de voleibol */}
         <div className="absolute bottom-0 left-0 right-0 h-24">
           {/* Arena/cesped */}
-          <div 
+          <div
             className="absolute bottom-0 left-0 right-0 h-16"
-            style={{ 
+            style={{
               background: 'linear-gradient(to top, #5D4E37, #6B5B45)',
             }}
           />
-          
+
           {/* Red de voleibol */}
           <div className="absolute bottom-16 left-1/2 -translate-x-1/2">
             <div className="w-0.5 h-20 bg-gray-300" />
@@ -97,7 +122,7 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
             <div className="w-3 h-3 rounded-full bg-pink-200" />
             <div className="w-2 h-4 rounded-t bg-pink-300 mx-auto" />
           </motion.div>
-          
+
           <motion.div
             className="absolute bottom-4"
             style={{ left: '50%' }}
@@ -108,6 +133,32 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
             <div className="w-2 h-4 rounded-t bg-blue-400 mx-auto" />
           </motion.div>
         </div>
+
+        {/* Control de Audio (Play Button) */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={() => toggleAudio()}
+          className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 text-white shadow-lg"
+        >
+          {isPlaying ? (
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              <span className="text-xl">⏸️</span>
+            </motion.div>
+          ) : (
+            <span className="text-xl pl-1">▶️</span>
+          )}
+        </motion.button>
+
+        {/* Audio Element */}
+        <audio
+          id="bg-audio"
+          src="/primer tulipan audio.ogg"
+          onEnded={() => setIsPlaying(false)}
+        />
 
         {/* Texto flotante */}
         <motion.div
@@ -157,7 +208,7 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
             className="space-y-4"
           >
             {/* Escena comiendo juntos */}
-            <div 
+            <div
               className="w-full h-32 rounded-xl flex items-center justify-center"
               style={{
                 background: 'linear-gradient(135deg, #2d2d44, #1a1a2e)',
@@ -174,7 +225,7 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
                 </div>
               </div>
             </div>
-            
+
             <p className="text-gray-500 text-sm italic">
               Comiendo en la cancha, mirando las estrellas.
             </p>
@@ -197,7 +248,7 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
             className="space-y-4"
           >
             {/* Caminando hacia la estación */}
-            <div 
+            <div
               className="w-full h-32 rounded-xl overflow-hidden"
               style={{
                 background: 'linear-gradient(to bottom, #4a5568, #2d3748)',
@@ -248,7 +299,10 @@ export function FlowerInicio({ onComplete }: FlowerInicioProps) {
                 animate={{ opacity: 1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={onComplete}
+                onClick={() => {
+                  toggleAudio(false)
+                  onComplete()
+                }}
                 className="text-pink-400 text-sm"
               >
                 ✓
