@@ -212,9 +212,9 @@ export function FlowerHogar({ onComplete }: FlowerHogarProps) {
             key="solved"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center p-6 text-center gap-6"
+            className="flex flex-col items-center p-6 text-center gap-6 overflow-y-auto custom-scrollbar max-h-[85vh]"
           >
-            <div className="relative w-full aspect-[9/16] max-h-[50vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10">
+            <div className="relative w-full aspect-[9/16] max-h-[40vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 shrink-0">
               <img
                 src="/ilustracionstranger.png"
                 alt="Stranger Things Illustration"
@@ -225,18 +225,30 @@ export function FlowerHogar({ onComplete }: FlowerHogarProps) {
 
             <div className="space-y-4">
               <h3 className="text-2xl font-bold text-red-600 tracking-wider">SIEMPRE CONTIGO</h3>
-              <p className="text-gray-300 italic text-sm leading-relaxed px-4">
-                "Luces, risas comida y Stranger Things… siempre contigo"
-              </p>
+              <div className="text-gray-300 italic text-sm leading-relaxed px-4 space-y-2">
+                <p>"Recuerda dejar la puerta abierta 8 cm…"</p>
+                <p>"Te llamaré solo 353 días,"</p>
+                <p>"y me comunicaré contigo por radio satelital…"</p>
+              </div>
+            </div>
+
+            {/* Video Clip */}
+            <div className="w-full rounded-xl overflow-hidden shadow-2xl border-2 border-red-900/30 bg-black shrink-0">
+              <video
+                src="/clip.mp4"
+                controls
+                autoPlay
+                className="w-full h-auto"
+              />
             </div>
 
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onComplete}
-              className="mt-4 bg-white text-black px-10 py-3 rounded-full font-bold shadow-lg hover:bg-gray-200 transition-colors"
+              className="mt-2 bg-gradient-to-r from-red-700 to-red-900 text-white px-10 py-4 rounded-full font-bold shadow-lg hover:from-red-600 hover:to-red-800 transition-all uppercase tracking-widest text-sm border-2 border-red-500/50"
             >
-              CONTINUAR
+              Cosechar tulipán
             </motion.button>
           </motion.div>
         )}
