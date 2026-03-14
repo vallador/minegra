@@ -84,13 +84,8 @@ export const useGiftStore = create<GiftState>()(
             // 1 al 3 ya cosechados (bloomed)
             if (f.id <= 3) return { ...f, status: 'bloomed' as FlowerStatus }
 
-            // 4 y 5 habilitados (tiempo = ahora)
-            if (f.id === 4 || f.id === 5) return { ...f, unlockTime: now }
-
-            // 6: 2 horas, 7: 1 hora, 8: 1.5 horas
-            if (f.id === 6) return { ...f, unlockTime: now + 2 * 60 * 60 * 1000 }
-            if (f.id === 7) return { ...f, unlockTime: now + 1 * 60 * 60 * 1000 }
-            if (f.id === 8) return { ...f, unlockTime: now + 1.5 * 60 * 60 * 1000 }
+            // 4 al 8 habilitados (tiempo = ahora)
+            if (f.id >= 4 && f.id <= 8) return { ...f, unlockTime: now }
 
             return f
           })
@@ -293,7 +288,7 @@ export const useGiftStore = create<GiftState>()(
     }),
     {
       name: 'gift-storage',
-      version: 5, // Forzar limpieza v5
+      version: 6, // Forzar limpieza v6
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
         isAdmin: state.isAdmin,
